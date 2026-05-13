@@ -1,0 +1,6 @@
+@ComucAPI_HostAddress = http://localhost:5099
+
+GET {{ComucAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
