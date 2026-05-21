@@ -6,6 +6,8 @@ import {
   Users,
   GraduationCap,
   Music,
+  Home,
+  User,
   LogOut,
   Menu,
   X,
@@ -85,15 +87,23 @@ export default function Layout() {
             <Menu size={22} />
           </button>
 
-          <div className="ml-auto flex items-center gap-4">
-            <span className="text-sm text-gray-600 hidden sm:block">
-              {user?.nome}
-            </span>
+          <div className="ml-auto flex items-center gap-3">
+            <button
+              onClick={() => navigate('/')}
+              className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
+            >
+              <Home size={15} />
+              Início
+            </button>
+            <button className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors">
+              <User size={15} />
+              {user?.nome ?? 'Perfil do Usuário'}
+            </button>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
             >
-              <LogOut size={16} />
+              <LogOut size={15} />
               Sair
             </button>
           </div>
