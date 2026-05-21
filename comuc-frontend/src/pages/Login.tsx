@@ -1,6 +1,10 @@
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
+import api from '@/lib/api'
 
 const loginSchema = z.object({
   usuario: z.string().min(1, 'Informe o nome de usuário'),
@@ -10,6 +14,10 @@ const loginSchema = z.object({
 type LoginForm = z.infer<typeof loginSchema>
 
 export default function Login() {
+  const { login } = useAuth()
+  const navigate = useNavigate()
+  const [erro, setErro] = useState('')
+
   const {
     register,
     handleSubmit,
@@ -18,7 +26,23 @@ export default function Login() {
     resolver: zodResolver(loginSchema),
   })
 
-  function onSubmit(_data: LoginForm) {}
+  async function onSubmit(data: LoginForm) {
+    setErro('')
+    try {
+      const response = await api.post('/Auth/login', {
+        Nome: data.usuario,
+        Senha: data.senha,
+      })
+      login({
+        id: response.data.Id,
+        nome: response.data.Nome,
+        tipoUsuario: response.data.TipoUsuario,
+      })
+      navigate('/presenca', { replace: true })
+    } catch {
+      setErro('Usuário ou senha inválidos.')
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
@@ -62,6 +86,10 @@ export default function Login() {
               <span className="text-xs text-red-500">{errors.senha.message}</span>
             )}
           </div>
+
+          {erro && (
+            <p className="text-xs text-red-500 text-center">{erro}</p>
+          )}
 
           <button
             type="submit"
