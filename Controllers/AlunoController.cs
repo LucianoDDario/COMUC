@@ -113,6 +113,21 @@ namespace ComucAPI.Controllers
             return CreatedAtAction("GetAluno", new { id = aluno.IdBanda }, aluno);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAluno(int id)
+        {
+            var aluno = await _context.Alunos.FindAsync(id);
+            if (aluno == null)
+            {
+                return NotFound();
+            }
+
+            _context.Alunos.Remove(aluno);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         private bool AlunoExists(int id)
         {
             return _context.Alunos.Any(e => e.IdBanda == id);

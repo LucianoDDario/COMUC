@@ -50,17 +50,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Aluno"
+                "$ref": "#/components/schemas/AlunoCreateDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Aluno"
+                "$ref": "#/components/schemas/AlunoCreateDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Aluno"
+                "$ref": "#/components/schemas/AlunoCreateDTO"
               }
             }
           }
@@ -167,27 +167,6 @@
             "description": "OK"
           }
         }
-      },
-      "delete": {
-        "tags": [
-          "Aluno"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
       }
     },
     "/api/Auth/login": {
@@ -199,17 +178,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RequisicaoLogin"
+                "$ref": "#/components/schemas/LoginRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/RequisicaoLogin"
+                "$ref": "#/components/schemas/LoginRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/RequisicaoLogin"
+                "$ref": "#/components/schemas/LoginRequest"
               }
             }
           }
@@ -385,6 +364,29 @@
         }
       },
       "delete": {
+        "tags": [
+          "Banda"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Banda/{id}/alunos": {
+      "get": {
         "tags": [
           "Banda"
         ],
@@ -776,7 +778,7 @@
         }
       }
     },
-    "/api/Presencas": {
+    "/api/Presencas/relatorio": {
       "get": {
         "tags": [
           "Presencas"
@@ -789,7 +791,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Presenca"
+                    "$ref": "#/components/schemas/ChamadaResponseDTO"
                   }
                 }
               },
@@ -797,7 +799,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Presenca"
+                    "$ref": "#/components/schemas/ChamadaResponseDTO"
                   }
                 }
               },
@@ -805,14 +807,16 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Presenca"
+                    "$ref": "#/components/schemas/ChamadaResponseDTO"
                   }
                 }
               }
             }
           }
         }
-      },
+      }
+    },
+    "/api/Presencas/registrar": {
       "post": {
         "tags": [
           "Presencas"
@@ -821,114 +825,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Presenca"
+                "$ref": "#/components/schemas/ChamadaRequestDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Presenca"
+                "$ref": "#/components/schemas/ChamadaRequestDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Presenca"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Presenca"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Presenca"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Presenca"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Presencas/{id}": {
-      "get": {
-        "tags": [
-          "Presencas"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Presenca"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Presenca"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Presenca"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Presencas"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Presenca"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Presenca"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Presenca"
+                "$ref": "#/components/schemas/ChamadaRequestDTO"
               }
             }
           }
@@ -938,22 +845,32 @@
             "description": "OK"
           }
         }
-      },
-      "delete": {
+      }
+    },
+    "/api/Presencas/registrar-lote": {
+      "post": {
         "tags": [
           "Presencas"
         ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoteChamadaRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoteChamadaRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoteChamadaRequest"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -1229,6 +1146,80 @@
         },
         "additionalProperties": false
       },
+      "AlunoChamada": {
+        "type": "object",
+        "properties": {
+          "idAluno": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "presente": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AlunoCreateDTO": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "dataNascimento": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "telefone": {
+            "type": "string",
+            "nullable": true
+          },
+          "cpf": {
+            "type": "string",
+            "nullable": true
+          },
+          "endereco": {
+            "type": "string",
+            "nullable": true
+          },
+          "nomePai": {
+            "type": "string",
+            "nullable": true
+          },
+          "nomeMae": {
+            "type": "string",
+            "nullable": true
+          },
+          "bolsista": {
+            "type": "boolean"
+          },
+          "dataInicio": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "motivoSaida": {
+            "type": "string",
+            "nullable": true
+          },
+          "possuiInstrumento": {
+            "type": "boolean"
+          },
+          "tamanhoVestimenta": {
+            "type": "string",
+            "nullable": true
+          },
+          "idBandas": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Banda": {
         "type": "object",
         "properties": {
@@ -1257,6 +1248,52 @@
         },
         "additionalProperties": false
       },
+      "ChamadaRequestDTO": {
+        "type": "object",
+        "properties": {
+          "idAluno": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idProfessor": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "presente": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ChamadaResponseDTO": {
+        "type": "object",
+        "properties": {
+          "idPresenca": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nomeAluno": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "presente": {
+            "type": "boolean"
+          },
+          "nomeProfessor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Funcionario": {
         "required": [
           "nome",
@@ -1277,6 +1314,45 @@
             "maxLength": 255,
             "minLength": 1,
             "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "senha": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoteChamadaRequest": {
+        "type": "object",
+        "properties": {
+          "idProfessor": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nomeChamada": {
+            "type": "string",
+            "nullable": true
+          },
+          "alunos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AlunoChamada"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1313,37 +1389,6 @@
         },
         "additionalProperties": false
       },
-      "Presenca": {
-        "required": [
-          "nome"
-        ],
-        "type": "object",
-        "properties": {
-          "idPresenca": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nome": {
-            "maxLength": 50,
-            "minLength": 1,
-            "type": "string"
-          },
-          "data": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "presente": {
-            "type": "boolean"
-          },
-          "aluno": {
-            "$ref": "#/components/schemas/Aluno"
-          },
-          "professor": {
-            "$ref": "#/components/schemas/Professor"
-          }
-        },
-        "additionalProperties": false
-      },
       "Professor": {
         "required": [
           "nome",
@@ -1364,20 +1409,6 @@
             "maxLength": 255,
             "minLength": 1,
             "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RequisicaoLogin": {
-        "type": "object",
-        "properties": {
-          "nome": {
-            "type": "string",
-            "nullable": true
-          },
-          "senha": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false

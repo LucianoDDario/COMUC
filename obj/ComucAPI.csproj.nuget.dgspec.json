@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\lucia\\OneDrive\\Documentos\\GitHub\\COMUC\\ComucAPI.csproj": {}
+    "C:\\Dev\\COMUC\\ComucAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\lucia\\OneDrive\\Documentos\\GitHub\\COMUC\\ComucAPI.csproj": {
+    "C:\\Dev\\COMUC\\ComucAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\lucia\\OneDrive\\Documentos\\GitHub\\COMUC\\ComucAPI.csproj",
+        "projectUniqueName": "C:\\Dev\\COMUC\\ComucAPI.csproj",
         "projectName": "ComucAPI",
-        "projectPath": "C:\\Users\\lucia\\OneDrive\\Documentos\\GitHub\\COMUC\\ComucAPI.csproj",
+        "projectPath": "C:\\Dev\\COMUC\\ComucAPI.csproj",
         "packagesPath": "C:\\Users\\lucia\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\lucia\\OneDrive\\Documentos\\GitHub\\COMUC\\obj\\",
+        "outputPath": "C:\\Dev\\COMUC\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -46,7 +46,7 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net10.0": {
@@ -105,7 +105,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.300/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

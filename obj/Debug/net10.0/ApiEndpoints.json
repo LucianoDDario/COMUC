@@ -28,8 +28,8 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "aluno",
-        "Type": "ComucAPI.Models.Aluno",
+        "Name": "dto",
+        "Type": "ComucAPI.DTOs.AlunoCreateDTO",
         "IsRequired": true
       }
     ],
@@ -93,22 +93,6 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "ComucAPI.Controllers.AlunoController",
-    "Method": "DeleteAluno",
-    "RelativePath": "api/Aluno/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
     "ContainingType": "ComucAPI.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/Auth/login",
@@ -118,7 +102,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "ComucAPI.DTOs.RequisicaoLogin",
+        "Type": "ComucAPI.DTOs.LoginRequest",
         "IsRequired": true
       }
     ],
@@ -222,6 +206,22 @@
     "Method": "DeleteBanda",
     "RelativePath": "api/Banda/{id}",
     "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ComucAPI.Controllers.BandaController",
+    "Method": "GetAlunosDaBanda",
+    "RelativePath": "api/Banda/{id}/alunos",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -453,15 +453,47 @@
   },
   {
     "ContainingType": "ComucAPI.Controllers.PresencasController",
-    "Method": "GetPresencas",
-    "RelativePath": "api/Presencas",
+    "Method": "RegistrarChamada",
+    "RelativePath": "api/Presencas/registrar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "ComucAPI.DTOs.ChamadaRequestDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ComucAPI.Controllers.PresencasController",
+    "Method": "RegistrarChamadaEmLote",
+    "RelativePath": "api/Presencas/registrar-lote",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "lote",
+        "Type": "ComucAPI.DTOs.LoteChamadaRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "ComucAPI.Controllers.PresencasController",
+    "Method": "GetRelatorioChamada",
+    "RelativePath": "api/Presencas/relatorio",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[ComucAPI.Models.Presenca, ComucAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[ComucAPI.DTOs.ChamadaResponseDTO, ComucAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -470,95 +502,6 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "ComucAPI.Controllers.PresencasController",
-    "Method": "PostPresenca",
-    "RelativePath": "api/Presencas",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "presenca",
-        "Type": "ComucAPI.Models.Presenca",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "ComucAPI.Models.Presenca",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "ComucAPI.Controllers.PresencasController",
-    "Method": "GetPresenca",
-    "RelativePath": "api/Presencas/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "ComucAPI.Models.Presenca",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "ComucAPI.Controllers.PresencasController",
-    "Method": "PutPresenca",
-    "RelativePath": "api/Presencas/{id}",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      },
-      {
-        "Name": "presenca",
-        "Type": "ComucAPI.Models.Presenca",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "ComucAPI.Controllers.PresencasController",
-    "Method": "DeletePresenca",
-    "RelativePath": "api/Presencas/{id}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
   },
   {
     "ContainingType": "ComucAPI.Controllers.ProfessorsController",
