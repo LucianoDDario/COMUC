@@ -78,6 +78,9 @@ namespace ComucAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Funcionario>> PostFuncionario(Funcionario funcionario)
         {
+            // Criptografa a senha antes de salvar
+            funcionario.senha = BCrypt.Net.BCrypt.HashPassword(funcionario.senha);
+
             _context.Funcionarios.Add(funcionario);
             await _context.SaveChangesAsync();
 

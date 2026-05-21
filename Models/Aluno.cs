@@ -8,6 +8,7 @@ namespace ComucAPI.Models
     {
         [Key]
         [Column("id_aluno")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdBanda { get; set; }
 
         [Required]

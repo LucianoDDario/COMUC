@@ -104,5 +104,29 @@ namespace ComucAPI.Controllers
         {
             return _context.Bandas.Any(e => e.IdBanda == id);
         }
+
+        [HttpGet("{id}/alunos")]
+        public async Task<ActionResult> GetAlunosDaBanda(int id)
+        {
+            // Busca a banda e já inclui a lista de alunos conectada a ela
+            var banda = await _context.Bandas
+                .Include(b => b.Alunos)
+                .FirstOrDefaultAsync(b => b.IdBanda == id);
+
+            if (banda == null)
+            {
+                return NotFound(new { Mensagem = "Banda não encontrada." });
+            }
+
+            // Retorna apenas os dados que a tela precisa para montar a lista
+            var alunosParaChamada = banda.Alunos.Select(a => new
+            {
+                IdAluno = a.IdBanda, // Usando a propriedade IdBanda que atua como PK do seu model Aluno
+                Nome = a.Nome
+            }).ToList();
+
+            return Ok(alunosParaChamada);
+        }
     }
+
 }

@@ -8,6 +8,7 @@ namespace ComucAPI.Models
     {
         [Key]
         [Column("id_presenca")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdPresenca { get; set; }
 
         [Required]

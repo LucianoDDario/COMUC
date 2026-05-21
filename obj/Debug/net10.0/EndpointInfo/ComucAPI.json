@@ -190,6 +190,37 @@
         }
       }
     },
+    "/api/Auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequisicaoLogin"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequisicaoLogin"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequisicaoLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Banda": {
       "get": {
         "tags": [
@@ -1243,7 +1274,7 @@
             "type": "string"
           },
           "senha": {
-            "maxLength": 50,
+            "maxLength": 255,
             "minLength": 1,
             "type": "string"
           }
@@ -1330,9 +1361,23 @@
             "type": "string"
           },
           "senha": {
-            "maxLength": 50,
+            "maxLength": 255,
             "minLength": 1,
             "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RequisicaoLogin": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "senha": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1342,6 +1387,9 @@
   "tags": [
     {
       "name": "Aluno"
+    },
+    {
+      "name": "Auth"
     },
     {
       "name": "Banda"

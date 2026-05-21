@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "jEmMekT3GgA=",
+  "dgSpecHash": "tk4cwq+YXxQ=",
   "success": true,
-  "projectFilePath": "C:\\Dev\\EstudosCSharp\\estudoscsharp2\\RestWithASPNET10\\ComucAPI\\ComucAPI\\ComucAPI.csproj",
+  "projectFilePath": "C:\\Users\\lucia\\OneDrive\\Documentos\\GitHub\\COMUC\\ComucAPI.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\lucia\\.nuget\\packages\\bcrypt.net-next\\4.2.0\\bcrypt.net-next.4.2.0.nupkg.sha512",
     "C:\\Users\\lucia\\.nuget\\packages\\humanizer\\2.14.1\\humanizer.2.14.1.nupkg.sha512",
     "C:\\Users\\lucia\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\lucia\\.nuget\\packages\\humanizer.core.af\\2.14.1\\humanizer.core.af.2.14.1.nupkg.sha512",
@@ -124,9 +125,9 @@
       "code": "NU1901",
       "level": "Warning",
       "message": "O pacote 'NuGet.Packaging' 6.12.1 tem uma baixa vulnerabilidade de gravidade conhecida, https://github.com/advisories/GHSA-g4vj-cjjj-v7hg",
-      "projectPath": "C:\\Dev\\EstudosCSharp\\estudoscsharp2\\RestWithASPNET10\\ComucAPI\\ComucAPI\\ComucAPI.csproj",
+      "projectPath": "C:\\Users\\lucia\\OneDrive\\Documentos\\GitHub\\COMUC\\ComucAPI.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Dev\\EstudosCSharp\\estudoscsharp2\\RestWithASPNET10\\ComucAPI\\ComucAPI\\ComucAPI.csproj",
+      "filePath": "C:\\Users\\lucia\\OneDrive\\Documentos\\GitHub\\COMUC\\ComucAPI.csproj",
       "libraryId": "NuGet.Packaging",
       "targetGraphs": [
         "net10.0"
@@ -136,9 +137,9 @@
       "code": "NU1901",
       "level": "Warning",
       "message": "O pacote 'NuGet.Protocol' 6.12.1 tem uma baixa vulnerabilidade de gravidade conhecida, https://github.com/advisories/GHSA-g4vj-cjjj-v7hg",
-      "projectPath": "C:\\Dev\\EstudosCSharp\\estudoscsharp2\\RestWithASPNET10\\ComucAPI\\ComucAPI\\ComucAPI.csproj",
+      "projectPath": "C:\\Users\\lucia\\OneDrive\\Documentos\\GitHub\\COMUC\\ComucAPI.csproj",
       "warningLevel": 1,
-      "filePath": "C:\\Dev\\EstudosCSharp\\estudoscsharp2\\RestWithASPNET10\\ComucAPI\\ComucAPI\\ComucAPI.csproj",
+      "filePath": "C:\\Users\\lucia\\OneDrive\\Documentos\\GitHub\\COMUC\\ComucAPI.csproj",
       "libraryId": "NuGet.Protocol",
       "targetGraphs": [
         "net10.0"

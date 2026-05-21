@@ -8,6 +8,7 @@ namespace ComucAPI.Models
     {
         [Key]
         [Column("id_funcionario")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdFuncionario { get; set; }
 
         [Required]
@@ -16,7 +17,7 @@ namespace ComucAPI.Models
         public string nome { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(255)]
         [Column("senha")]
         public string senha { get; set; }
     }

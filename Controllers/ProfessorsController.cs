@@ -78,6 +78,9 @@ namespace ComucAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Professor>> PostProfessor(Professor professor)
         {
+            // Criptografa a senha antes de salvar
+            professor.Senha = BCrypt.Net.BCrypt.HashPassword(professor.Senha);
+
             _context.Professores.Add(professor);
             await _context.SaveChangesAsync();
 

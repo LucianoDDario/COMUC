@@ -8,6 +8,7 @@ namespace ComucAPI.Models
     {
         [Key]
         [Column("id_nota")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdNota { get; set; }
 
         [Column("valor_nota", TypeName = "decimal(10,2)")]

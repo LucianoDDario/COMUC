@@ -9,6 +9,7 @@ namespace ComucAPI.Models
    
         [Key]
         [Column("id_banda")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdBanda { get; set; }
 
         [Column("nome")]

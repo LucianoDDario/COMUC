@@ -8,6 +8,7 @@ namespace ComucAPI.Models
     {
         [Key]
         [Column("id_professor")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdProfessor { get; set; }
 
         [Required]
@@ -16,7 +17,7 @@ namespace ComucAPI.Models
         public string Nome { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(255)]
         [Column("senha")]
         public string Senha { get; set; }
     }
