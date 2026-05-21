@@ -98,7 +98,7 @@ export default function Presenca() {
       <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">Selecione a Banda</label>
+            <label className="text-sm font-medium text-gray-700">Banda</label>
             <select
               value={bandaId ?? ''}
               onChange={e => {
@@ -106,7 +106,7 @@ export default function Presenca() {
                 setAlunos([])
                 setMensagem(null)
               }}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-400 outline-none focus:ring-2 focus:ring-gray-900 transition"
             >
               <option value="">Selecione a banda</option>
               {carregandoBandas ? (
@@ -122,12 +122,12 @@ export default function Presenca() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium text-gray-700">Selecione a Data da Aula</label>
+            <label className="text-sm font-medium text-gray-700">Data da Aula</label>
             <input
               type="date"
               value={data}
               onChange={e => setData(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
+              className={`border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition ${data ? 'text-gray-900' : 'text-gray-400'}`}
             />
           </div>
         </div>
