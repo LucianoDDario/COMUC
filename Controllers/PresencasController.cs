@@ -113,5 +113,4 @@ namespace ComucAPI.Controllers
             return Ok(new { Mensagem = $"{novasPresencas.Count} registros de '{lote.NomeChamada}' salvos com sucesso!" });
         }
     }
-    }
 }

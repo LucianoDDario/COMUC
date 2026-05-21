@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ComucAPI.Data;
+using ComucAPI.DTOs;
+using ComucAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ComucAPI.Data;
-using ComucAPI.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ComucAPI.Controllers
 {
@@ -76,28 +77,40 @@ namespace ComucAPI.Controllers
         // POST: api/Aluno
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Aluno>> PostAluno(Aluno aluno)
+        public async Task<ActionResult<Aluno>> PostAluno([FromBody] AlunoCreateDTO dto)
         {
+            // 1. Busca no banco de dados todas as bandas cujos IDs foram enviados no DTO
+            var bandasSelecionadas = await _context.Bandas
+                .Where(b => dto.IdBandas.Contains(b.IdBanda))
+                .ToListAsync();
+
+            // 2. Cria o objeto Aluno mapeando todas as propriedades do modelo
+            var aluno = new Aluno
+            {
+                Nome = dto.Nome,
+                DataNascimento = dto.DataNascimento,
+                Telefone = dto.Telefone,
+                CPF = dto.CPF,
+                Endereco = dto.Endereco,
+                NomePai = dto.NomePai,
+                NomeMae = dto.NomeMae,
+                Bolsista = dto.Bolsista,
+                DataInicio = dto.DataInicio,
+                MotivoSaida = dto.MotivoSaida,
+                PossuiInstrumento = dto.PossuiInstrumento,
+                TamanhoVestimenta = dto.TamanhoVestimenta,
+
+                // O Entity Framework Core associa automaticamente na tabela intermediária
+                Bandas = bandasSelecionadas
+            };
+
+
+            // 3. Salva o aluno e os seus vínculos no banco de dados
             _context.Alunos.Add(aluno);
             await _context.SaveChangesAsync();
 
+            // Nota: Como o seu model mapeou a PK na propriedade 'IdBanda', usamos ela aqui
             return CreatedAtAction("GetAluno", new { id = aluno.IdBanda }, aluno);
-        }
-
-        // DELETE: api/Aluno/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAluno(int id)
-        {
-            var aluno = await _context.Alunos.FindAsync(id);
-            if (aluno == null)
-            {
-                return NotFound();
-            }
-
-            _context.Alunos.Remove(aluno);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private bool AlunoExists(int id)
