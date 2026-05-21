@@ -34,9 +34,9 @@ export default function Login() {
         Senha: data.senha,
       })
       login({
-        id: response.data.Id,
-        nome: response.data.Nome,
-        tipoUsuario: response.data.TipoUsuario,
+        id: response.data.id,
+        nome: response.data.nome,
+        tipoUsuario: response.data.tipoUsuario,
       })
       navigate('/presenca', { replace: true })
     } catch {

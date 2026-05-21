@@ -3,12 +3,56 @@
   "WorkspaceRootPath": "C:\\Dev\\COMUC\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\controllers\\notacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:controllers\\notacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\dtos\\notacreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\notacreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\dtos\\chamadaresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\chamadaresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\dtos\\chamadarequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\chamadarequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\models\\presenca.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:models\\presenca.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\models\\aluno.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:models\\aluno.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\controllers\\alunocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:controllers\\alunocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\dtos\\alunocreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\alunocreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\dtos\\alunochamada.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\alunochamada.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\controllers\\bandacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:controllers\\bandacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\dtos\\bandacreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\bandacreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\models\\banda.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:models\\banda.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\controllers\\presencascontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -19,32 +63,8 @@
       "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\dtos\\chamadarequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\chamadarequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\dtos\\lotechamadarequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\lotechamadarequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\controllers\\bandacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:controllers\\bandacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\models\\banda.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:models\\banda.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\dtos\\alunochamada.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\alunochamada.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\dtos\\chamadaresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:dtos\\chamadaresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\models\\aluno.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:models\\aluno.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\controllers\\funcionariocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -53,10 +73,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\models\\nota.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:models\\nota.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\models\\presenca.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|solutionrelative:models\\presenca.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CBD53C1B-1698-CFB5-7C42-2A276075DE29}|ComucAPI.csproj|c:\\dev\\comuc\\models\\professor.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -82,61 +98,89 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AlunoController.cs",
-              "DocumentMoniker": "C:\\Dev\\COMUC\\Controllers\\AlunoController.cs",
-              "RelativeDocumentMoniker": "Controllers\\AlunoController.cs",
-              "ToolTip": "C:\\Dev\\COMUC\\Controllers\\AlunoController.cs*",
-              "RelativeToolTip": "Controllers\\AlunoController.cs*",
-              "ViewState": "AgIAACkAAAAAAAAAAAAwwHYAAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-21T01:31:48.622Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "NotaController.cs",
+              "DocumentMoniker": "C:\\Dev\\COMUC\\Controllers\\NotaController.cs",
+              "RelativeDocumentMoniker": "Controllers\\NotaController.cs",
+              "ToolTip": "C:\\Dev\\COMUC\\Controllers\\NotaController.cs*",
+              "RelativeToolTip": "Controllers\\NotaController.cs*",
+              "ViewState": "AgIAAJcAAAAAAAAAAAAwwK0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T21:54:43.18Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "NotaCreate.cs",
+              "DocumentMoniker": "C:\\Dev\\COMUC\\DTOs\\NotaCreate.cs",
+              "RelativeDocumentMoniker": "DTOs\\NotaCreate.cs",
+              "ToolTip": "C:\\Dev\\COMUC\\DTOs\\NotaCreate.cs",
+              "RelativeToolTip": "DTOs\\NotaCreate.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T21:53:54.902Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Aluno.cs",
+              "DocumentMoniker": "C:\\Dev\\COMUC\\Models\\Aluno.cs",
+              "RelativeDocumentMoniker": "Models\\Aluno.cs",
+              "ToolTip": "C:\\Dev\\COMUC\\Models\\Aluno.cs",
+              "RelativeToolTip": "Models\\Aluno.cs",
+              "ViewState": "AgIAADkAAAAAAAAAAAA4wAsAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-20T23:57:44.44Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AlunoController.cs",
+              "DocumentMoniker": "C:\\Dev\\COMUC\\Controllers\\AlunoController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AlunoController.cs",
+              "ToolTip": "C:\\Dev\\COMUC\\Controllers\\AlunoController.cs",
+              "RelativeToolTip": "Controllers\\AlunoController.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAmwHIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T01:31:48.622Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "AlunoCreate.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\DTOs\\AlunoCreate.cs",
               "RelativeDocumentMoniker": "DTOs\\AlunoCreate.cs",
               "ToolTip": "C:\\Dev\\COMUC\\DTOs\\AlunoCreate.cs",
               "RelativeToolTip": "DTOs\\AlunoCreate.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABcAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAzwBcAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-21T01:31:28.178Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "BandaController.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\Controllers\\BandaController.cs",
               "RelativeDocumentMoniker": "Controllers\\BandaController.cs",
               "ToolTip": "C:\\Dev\\COMUC\\Controllers\\BandaController.cs",
               "RelativeToolTip": "Controllers\\BandaController.cs",
-              "ViewState": "AgIAAGAAAAAAAAAAAAAIwIAAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAIkAAAAAAAAAAAAIwJMAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-21T00:32:21.293Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "LoteChamadaRequest.cs",
-              "DocumentMoniker": "C:\\Dev\\COMUC\\DTOs\\LoteChamadaRequest.cs",
-              "RelativeDocumentMoniker": "DTOs\\LoteChamadaRequest.cs",
-              "ToolTip": "C:\\Dev\\COMUC\\DTOs\\LoteChamadaRequest.cs",
-              "RelativeToolTip": "DTOs\\LoteChamadaRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-21T00:31:14.05Z"
+              "WhenOpened": "2026-05-21T00:32:21.293Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -148,24 +192,12 @@
               "RelativeToolTip": "DTOs\\AlunoChamada.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-21T00:30:45.372Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "PresencasController.cs",
-              "DocumentMoniker": "C:\\Dev\\COMUC\\Controllers\\PresencasController.cs",
-              "RelativeDocumentMoniker": "Controllers\\PresencasController.cs",
-              "ToolTip": "C:\\Dev\\COMUC\\Controllers\\PresencasController.cs",
-              "RelativeToolTip": "Controllers\\PresencasController.cs",
-              "ViewState": "AgIAAFkAAAAAAAAAAAAIwGAAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-21T00:23:08.436Z",
+              "WhenOpened": "2026-05-21T00:30:45.372Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "ChamadaRequest.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\DTOs\\ChamadaRequest.cs",
               "RelativeDocumentMoniker": "DTOs\\ChamadaRequest.cs",
@@ -178,7 +210,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 2,
               "Title": "ChamadaResponse.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\DTOs\\ChamadaResponse.cs",
               "RelativeDocumentMoniker": "DTOs\\ChamadaResponse.cs",
@@ -186,11 +218,12 @@
               "RelativeToolTip": "DTOs\\ChamadaResponse.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-21T00:21:56.517Z"
+              "WhenOpened": "2026-05-21T00:21:56.517Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 4,
               "Title": "Presenca.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\Models\\Presenca.cs",
               "RelativeDocumentMoniker": "Models\\Presenca.cs",
@@ -198,11 +231,75 @@
               "RelativeToolTip": "Models\\Presenca.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA9AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-20T23:58:09.605Z"
+              "WhenOpened": "2026-05-20T23:58:09.605Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "BandaCreate.cs",
+              "DocumentMoniker": "C:\\Dev\\COMUC\\DTOs\\BandaCreate.cs",
+              "RelativeDocumentMoniker": "DTOs\\BandaCreate.cs",
+              "ToolTip": "C:\\Dev\\COMUC\\DTOs\\BandaCreate.cs",
+              "RelativeToolTip": "DTOs\\BandaCreate.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T20:31:37.104Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 12,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Dev\\COMUC\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Dev\\COMUC\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAAABkAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T20:46:57.344Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Banda.cs",
+              "DocumentMoniker": "C:\\Dev\\COMUC\\Models\\Banda.cs",
+              "RelativeDocumentMoniker": "Models\\Banda.cs",
+              "ToolTip": "C:\\Dev\\COMUC\\Models\\Banda.cs",
+              "RelativeToolTip": "Models\\Banda.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-20T23:57:51.89Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "PresencasController.cs",
+              "DocumentMoniker": "C:\\Dev\\COMUC\\Controllers\\PresencasController.cs",
+              "RelativeDocumentMoniker": "Controllers\\PresencasController.cs",
+              "ToolTip": "C:\\Dev\\COMUC\\Controllers\\PresencasController.cs",
+              "RelativeToolTip": "Controllers\\PresencasController.cs",
+              "ViewState": "AgIAAFkAAAAAAAAAAAAIwGAAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T00:23:08.436Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "LoteChamadaRequest.cs",
+              "DocumentMoniker": "C:\\Dev\\COMUC\\DTOs\\LoteChamadaRequest.cs",
+              "RelativeDocumentMoniker": "DTOs\\LoteChamadaRequest.cs",
+              "ToolTip": "C:\\Dev\\COMUC\\DTOs\\LoteChamadaRequest.cs",
+              "RelativeToolTip": "DTOs\\LoteChamadaRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAgAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-21T00:31:14.05Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
               "Title": "Nota.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\Models\\Nota.cs",
               "RelativeDocumentMoniker": "Models\\Nota.cs",
@@ -214,31 +311,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Banda.cs",
-              "DocumentMoniker": "C:\\Dev\\COMUC\\Models\\Banda.cs",
-              "RelativeDocumentMoniker": "Models\\Banda.cs",
-              "ToolTip": "C:\\Dev\\COMUC\\Models\\Banda.cs",
-              "RelativeToolTip": "Models\\Banda.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-20T23:57:51.89Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "Aluno.cs",
-              "DocumentMoniker": "C:\\Dev\\COMUC\\Models\\Aluno.cs",
-              "RelativeDocumentMoniker": "Models\\Aluno.cs",
-              "ToolTip": "C:\\Dev\\COMUC\\Models\\Aluno.cs",
-              "RelativeToolTip": "Models\\Aluno.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-20T23:57:44.44Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 18,
               "Title": "Professor.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\Models\\Professor.cs",
               "RelativeDocumentMoniker": "Models\\Professor.cs",
@@ -250,7 +323,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 19,
               "Title": "Funcionario.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\Models\\Funcionario.cs",
               "RelativeDocumentMoniker": "Models\\Funcionario.cs",
@@ -262,7 +335,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 16,
               "Title": "FuncionarioController.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\Controllers\\FuncionarioController.cs",
               "RelativeDocumentMoniker": "Controllers\\FuncionarioController.cs",
@@ -274,7 +347,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 20,
               "Title": "ProfessorsController.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\Controllers\\ProfessorsController.cs",
               "RelativeDocumentMoniker": "Controllers\\ProfessorsController.cs",
@@ -286,7 +359,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 21,
               "Title": "AutenticadorController.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\Controllers\\AutenticadorController.cs",
               "RelativeDocumentMoniker": "Controllers\\AutenticadorController.cs",
@@ -298,7 +371,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 14,
               "Title": "LoginRequest.cs",
               "DocumentMoniker": "C:\\Dev\\COMUC\\DTOs\\LoginRequest.cs",
               "RelativeDocumentMoniker": "DTOs\\LoginRequest.cs",
@@ -306,12 +379,7 @@
               "RelativeToolTip": "DTOs\\LoginRequest.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-20T23:28:45.4Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+              "WhenOpened": "2026-05-20T23:28:45.4Z"
             }
           ]
         }

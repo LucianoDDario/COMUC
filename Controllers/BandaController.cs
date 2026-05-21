@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ComucAPI.Data;
 using ComucAPI.Models;
+using ComucAPI.DTOs;
 
 namespace ComucAPI.Controllers
 {
@@ -75,13 +76,36 @@ namespace ComucAPI.Controllers
 
         // POST: api/Banda
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST: api/Banda
         [HttpPost]
-        public async Task<ActionResult<Banda>> PostBanda(Banda banda)
+        public async Task<ActionResult> PostBanda([FromBody] BandaCreateDTO dto)
         {
+            // 1. Verifica se o professor informado realmente existe
+            var professor = await _context.Professores.FindAsync(dto.IdProfessor);
+
+            if (professor == null)
+            {
+                return NotFound(new { Mensagem = "Não é possível criar a banda: Professor não encontrado." });
+            }
+
+            // 2. Cria o objeto Banda mapeando os dados do DTO
+            var banda = new Banda
+            {
+                Nome = dto.Nome,
+                id_professor = dto.IdProfessor
+            };
+
+            // 3. Salva no banco de dados
             _context.Bandas.Add(banda);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBanda", new { id = banda.IdBanda }, banda);
+            // 4. Retorna sucesso confirmando os dados criados
+            return CreatedAtAction("GetBanda", new { id = banda.IdBanda }, new
+            {
+                IdBanda = banda.IdBanda,
+                Nome = banda.Nome,
+                IdProfessor = banda.id_professor
+            });
         }
 
         // DELETE: api/Banda/5
@@ -121,7 +145,7 @@ namespace ComucAPI.Controllers
             // Retorna apenas os dados que a tela precisa para montar a lista
             var alunosParaChamada = banda.Alunos.Select(a => new
             {
-                IdAluno = a.IdBanda, // Usando a propriedade IdBanda que atua como PK do seu model Aluno
+                IdAluno = a.IdAluno, // Usando a propriedade IdBanda que atua como PK do seu model Aluno
                 Nome = a.Nome
             }).ToList();
 

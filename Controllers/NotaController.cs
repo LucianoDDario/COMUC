@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using ComucAPI.Data;
+using ComucAPI.DTOs;
+using ComucAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ComucAPI.Data;
-using ComucAPI.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ComucAPI.Controllers
 {
@@ -43,7 +44,6 @@ namespace ComucAPI.Controllers
         }
 
         // PUT: api/Nota/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutNota(int id, Nota nota)
         {
@@ -74,14 +74,80 @@ namespace ComucAPI.Controllers
         }
 
         // POST: api/Nota
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Nota>> PostNota(Nota nota)
+        public async Task<ActionResult> PostNota([FromBody] NotaCreateDTO dto)
         {
-            _context.Notas.Add(nota);
+            // 1. Valida se o aluno e o professor existem
+            var aluno = await _context.Alunos.FindAsync(dto.IdAluno);
+            var professor = await _context.Professores.FindAsync(dto.IdProfessor);
+
+            if (aluno == null || professor == null)
+            {
+                return NotFound(new { Mensagem = "Aluno ou Professor não encontrado." });
+            }
+
+            // 2. Cria o objeto Nota mapeando os relacionamentos virtuais
+            var novaNota = new Nota
+            {
+                ValorNota = dto.ValorNota,
+                Mes = dto.Mes,
+                Musica = dto.Musica,
+                Descricao = dto.Descricao,
+                Aluno = aluno,
+                Professor = professor
+            };
+
+            _context.Notas.Add(novaNota);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetNota", new { id = nota.IdNota }, nota);
+            return Ok(new { Mensagem = "Nota lançada com sucesso!" });
+        }
+
+        // GET: api/Nota/medias
+        // Se passar ?mes=5&ano=2026 ele filtra. Se não passar nada, traz tudo!
+        [HttpGet("medias")]
+        public async Task<ActionResult> GetMedias([FromQuery] int? mes, [FromQuery] int? ano)
+        {
+            // 1. Criamos a consulta básica (sem executar ainda)
+            var query = _context.Notas
+                .Include(n => n.Aluno)
+                .Include(n => n.Professor)
+                .AsQueryable();
+
+            // 2. Se o front-end passou o mês, adiciona o filtro na consulta SQL
+            if (mes.HasValue)
+            {
+                query = query.Where(n => n.Mes.Month == mes.Value);
+            }
+
+            // 3. Se o front-end passou o ano, adiciona o filtro na consulta SQL
+            if (ano.HasValue)
+            {
+                query = query.Where(n => n.Mes.Year == ano.Value);
+            }
+
+            // 4. Só agora o Entity Framework vai ao banco e busca apenas o que passou no filtro
+            var notasFiltradas = await query.ToListAsync();
+
+            // 5. Agrupa os resultados filtrados para calcular a média
+            var relatorioMedias = notasFiltradas
+                .GroupBy(n => new { n.Aluno.IdAluno, n.Aluno.Nome, n.Mes.Month, n.Mes.Year, n.Musica })
+                .Select(grupo => new
+                {
+                    IdAluno = grupo.Key.IdAluno,
+                    NomeAluno = grupo.Key.Nome,
+                    MesAno = $"{grupo.Key.Month:D2}/{grupo.Key.Year}",
+                    Musica = grupo.Key.Musica,
+                    DetalhesNotas = grupo.Select(n => new
+                    {
+                        Professor = n.Professor.Nome,
+                        Nota = n.ValorNota
+                    }).ToList(),
+                    Media = grupo.Average(n => n.ValorNota)
+                })
+                .ToList();
+
+            return Ok(relatorioMedias);
         }
 
         // DELETE: api/Nota/5

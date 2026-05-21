@@ -48,7 +48,7 @@ namespace ComucAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAluno(int id, Aluno aluno)
         {
-            if (id != aluno.IdBanda)
+            if (id != aluno.IdAluno)
             {
                 return BadRequest();
             }
@@ -110,7 +110,7 @@ namespace ComucAPI.Controllers
             await _context.SaveChangesAsync();
 
             // Nota: Como o seu model mapeou a PK na propriedade 'IdBanda', usamos ela aqui
-            return CreatedAtAction("GetAluno", new { id = aluno.IdBanda }, aluno);
+            return CreatedAtAction("GetAluno", new { id = aluno.IdAluno }, aluno);
         }
 
         [HttpDelete("{id}")]
@@ -130,7 +130,7 @@ namespace ComucAPI.Controllers
 
         private bool AlunoExists(int id)
         {
-            return _context.Alunos.Any(e => e.IdBanda == id);
+            return _context.Alunos.Any(e => e.IdAluno == id);
         }
     }
 }

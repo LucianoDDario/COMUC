@@ -9,7 +9,7 @@ namespace ComucAPI.Models
         [Key]
         [Column("id_aluno")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int IdBanda { get; set; }
+        public int IdAluno { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -17,7 +17,7 @@ namespace ComucAPI.Models
         public string Nome { get; set; }
 
         [Required]
-        [Column("data_nascimento")]
+        [Column("data_de_nascimento")]
         public DateTime DataNascimento  { get; set; }
 
         [Required]
@@ -32,32 +32,33 @@ namespace ComucAPI.Models
 
         [Required]
         [MaxLength(200)]
+        [Column("endereco")]
         public string Endereco { get; set; }
 
         [MaxLength(50)]
-        [Column("nome_pai")]
+        [Column("nome_do_pai")]
         public string NomePai { get; set; }
 
         [MaxLength(50)]
-        [Column("nome_mae")]
+        [Column("nome_da_mae")]
         public string NomeMae { get; set; }
 
         [Required]
         [Column("bolsista")]
         public bool Bolsista { get; set; }
 
-        [Column("data_inicio")]
+        [Column("data_de_inicio")]
         public DateTime? DataInicio { get; set; }
 
         [MaxLength(100)]
-        [Column("motivo_saida")]
+        [Column("motivo_de_saida")]
         public string MotivoSaida { get; set; }
 
-        [Column("possui_instrumento")]
+        [Column("possui_instrumento_proprio")]
         public bool PossuiInstrumento { get; set; }
 
         [MaxLength(50)]
-        [Column("tamanho_vestimenta")]
+        [Column("tamanho_da_vestimenta")]
         public string TamanhoVestimenta { get; set; }
 
         public virtual ICollection<Banda> Bandas {  get; set; } = new List<Banda>();

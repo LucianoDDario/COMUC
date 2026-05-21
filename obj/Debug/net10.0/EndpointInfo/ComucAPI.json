@@ -167,6 +167,27 @@
             "description": "OK"
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Aluno"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/api/Auth/login": {
@@ -245,41 +266,24 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Banda"
+                "$ref": "#/components/schemas/BandaCreateDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Banda"
+                "$ref": "#/components/schemas/BandaCreateDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Banda"
+                "$ref": "#/components/schemas/BandaCreateDTO"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Banda"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Banda"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Banda"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -638,41 +642,24 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Nota"
+                "$ref": "#/components/schemas/NotaCreateDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Nota"
+                "$ref": "#/components/schemas/NotaCreateDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Nota"
+                "$ref": "#/components/schemas/NotaCreateDTO"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Nota"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Nota"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Nota"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -765,6 +752,36 @@
             "name": "id",
             "in": "path",
             "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Nota/medias": {
+      "get": {
+        "tags": [
+          "Nota"
+        ],
+        "parameters": [
+          {
+            "name": "mes",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ano",
+            "in": "query",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1077,7 +1094,7 @@
         ],
         "type": "object",
         "properties": {
-          "idBanda": {
+          "idAluno": {
             "type": "integer",
             "format": "int32"
           },
@@ -1248,6 +1265,20 @@
         },
         "additionalProperties": false
       },
+      "BandaCreateDTO": {
+        "type": "object",
+        "properties": {
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "idProfessor": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "ChamadaRequestDTO": {
         "type": "object",
         "properties": {
@@ -1385,6 +1416,36 @@
           },
           "professor": {
             "$ref": "#/components/schemas/Professor"
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotaCreateDTO": {
+        "type": "object",
+        "properties": {
+          "idAluno": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idProfessor": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "valorNota": {
+            "type": "number",
+            "format": "double"
+          },
+          "mes": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "musica": {
+            "type": "string",
+            "nullable": true
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
