@@ -6,12 +6,12 @@ import {
   Users,
   GraduationCap,
   Music,
-  Home,
-  User,
+  LogOut,
   Menu,
   X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
 
 const navItems = [
   { to: '/presenca', label: 'Presença', icon: BarChart2 },
@@ -24,6 +24,12 @@ const navItems = [
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const navigate = useNavigate()
+  const { user, logout } = useAuth()
+
+  function handleLogout() {
+    logout()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <div className="flex min-h-screen bg-gray-100">
@@ -80,16 +86,15 @@ export default function Layout() {
           </button>
 
           <div className="ml-auto flex items-center gap-4">
+            <span className="text-sm text-gray-600 hidden sm:block">
+              {user?.nome}
+            </span>
             <button
-              onClick={() => navigate('/')}
+              onClick={handleLogout}
               className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
-              <Home size={16} />
-              Início
-            </button>
-            <button className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors">
-              <User size={16} />
-              Perfil do Usuário
+              <LogOut size={16} />
+              Sair
             </button>
           </div>
 
