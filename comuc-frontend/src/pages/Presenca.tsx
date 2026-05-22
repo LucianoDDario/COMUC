@@ -70,6 +70,7 @@ export default function Presenca() {
     try {
       await api.post('/Presencas/registrar-lote', {
         IdProfessor: user!.id,
+        IdBanda: bandaId,
         Data: new Date(data + "T00:00:00Z").toISOString(),
         NomeChamada: `${bandaNome} - ${new Date(data).toLocaleDateString('pt-BR')}`,
         Alunos: alunos.map(a => ({ IdAluno: a.idAluno, Presente: a.presente })),

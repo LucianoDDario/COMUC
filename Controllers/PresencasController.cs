@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ComucAPI.Data;
 using ComucAPI.Models;
-using ComucAPI.DTOs; // Garanta que importou a pasta dos DTOs
+using ComucAPI.DTOs;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,75 +21,54 @@ namespace ComucAPI.Controllers
         }
 
         // GET: api/Presencas/relatorio
+        // Retorna o relatório completo sabendo a turma, o aluno e o professor
         [HttpGet("relatorio")]
-        public async Task<ActionResult<IEnumerable<ChamadaResponseDTO>>> GetRelatorioChamada()
+        public async Task<ActionResult> GetRelatorioChamada()
         {
-            // O Include traz os dados das tabelas relacionadas (aluno e professor)
             var listagem = await _context.Presencas
                 .Include(p => p.Aluno)
                 .Include(p => p.Professor)
-                .Select(p => new ChamadaResponseDTO
+                .Include(p => p.Banda) // Inclui a banda na consulta
+                .Select(p => new
                 {
                     IdPresenca = p.IdPresenca,
-                    NomeAluno = p.Aluno != null ? p.Aluno.Nome : "Aluno não encontrado",
                     Data = p.Data,
                     Presente = p.Presente,
-                    NomeProfessor = p.Professor != null ? p.Professor.Nome : "Professor não encontrado"
+                    TipoEvento = p.Nome, // Nome da chamada (Ex: Ensaio, Aula)
+                    NomeAluno = p.Aluno != null ? p.Aluno.Nome : "Desconhecido",
+                    NomeProfessor = p.Professor != null ? p.Professor.Nome : "Desconhecido",
+                    NomeBanda = p.Banda != null ? p.Banda.Nome : "Ensaio Geral / Sem Turma" // Exibe o nome da banda
                 })
                 .ToListAsync();
 
             return Ok(listagem);
         }
 
-        // POST: api/Presencas/registrar
-        [HttpPost("registrar")]
-        public async Task<ActionResult> RegistrarChamada([FromBody] ChamadaRequestDTO dto)
-        {
-            // 1. Busca o aluno e o professor no banco para garantir que existem
-            // Nota: No seu model Aluno, a chave primária foi mapeada na propriedade 'IdBanda'
-            var aluno = await _context.Alunos.FindAsync(dto.IdAluno);
-            var professor = await _context.Professores.FindAsync(dto.IdProfessor);
-
-            if (aluno == null)
-            {
-                return NotFound(new { Mensagem = "Aluno não encontrado." });
-            }
-
-            if (professor == null)
-            {
-                return NotFound(new { Mensagem = "Professor não encontrado." });
-            }
-
-            // 2. Cria o objeto de Presença mapeando os relacionamentos reais
-            var novaPresenca = new Presenca
-            {
-                Data = dto.Data,
-                Presente = dto.Presente,
-                Aluno = aluno,
-                Professor = professor,
-                Nome = $"Chamada de {aluno.Nome}" // Seu model exige a propriedade 'Nome' preenchida (MaxLength 50)
-            };
-
-            // 3. Salva no banco de dados
-            _context.Presencas.Add(novaPresenca);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { Mensagem = "Presença registrada com sucesso!" });
-        }
-
-        // POST: api/Presencas/registrar-lote
         // POST: api/Presencas/registrar-lote
         [HttpPost("registrar-lote")]
         public async Task<IActionResult> RegistrarChamadaEmLote([FromBody] LoteChamadaRequest lote)
         {
+            // 1. Valida se o professor existe
             var professor = await _context.Professores.FindAsync(lote.IdProfessor);
             if (professor == null)
             {
                 return NotFound(new { Mensagem = "Professor não encontrado." });
             }
 
+            // 2. Busca a banda/turma se ela tiver sido informada
+            Banda banda = null;
+            if (lote.IdBanda.HasValue)
+            {
+                banda = await _context.Bandas.FindAsync(lote.IdBanda.Value);
+                if (banda == null)
+                {
+                    return NotFound(new { Mensagem = "Banda/Turma não encontrada." });
+                }
+            }
+
             var novasPresencas = new List<Presenca>();
 
+            // 3. Percorre a lista de alunos vinculando tudo
             foreach (var item in lote.Alunos)
             {
                 var aluno = await _context.Alunos.FindAsync(item.IdAluno);
@@ -102,7 +81,8 @@ namespace ComucAPI.Controllers
                         Presente = item.Presente,
                         Professor = professor,
                         Aluno = aluno,
-                        Nome = lote.NomeChamada // <-- AGORA ATRIBUI O NOME DINAMICAMENTE
+                        Banda = banda, // <-- VINCULA A BANDA AQUI
+                        Nome = lote.NomeChamada
                     });
                 }
             }
@@ -110,7 +90,40 @@ namespace ComucAPI.Controllers
             _context.Presencas.AddRange(novasPresencas);
             await _context.SaveChangesAsync();
 
-            return Ok(new { Mensagem = $"{novasPresencas.Count} registros de '{lote.NomeChamada}' salvos com sucesso!" });
+            return Ok(new { Mensagem = $"Chamada de '{lote.NomeChamada}' salva com sucesso para a turma!" });
+        }
+
+        // PUT: api/Presencas/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutPresenca(int id, [FromBody] PresencaEditDTO dto)
+        {
+            var presencaNoBanco = await _context.Presencas.FindAsync(id);
+            if (presencaNoBanco == null)
+            {
+                return NotFound(new { Mensagem = "Registro de presença não encontrado." });
+            }
+
+            presencaNoBanco.Presente = dto.Presente;
+            presencaNoBanco.Nome = dto.Nome;
+            presencaNoBanco.Data = dto.Data;
+
+            _context.Entry(presencaNoBanco).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Mensagem = "Presença atualizada com sucesso!" });
+        }
+
+        // DELETE: api/Presencas/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePresenca(int id)
+        {
+            var presenca = await _context.Presencas.FindAsync(id);
+            if (presenca == null) return NotFound();
+
+            _context.Presencas.Remove(presenca);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
     }
 }

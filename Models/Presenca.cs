@@ -22,6 +22,9 @@ namespace ComucAPI.Models
         [Column("presenca")]
         public bool Presente {  get; set; }
 
+        [ForeignKey("id_banda")]
+        public virtual Banda Banda{ get; set; }
+
         [ForeignKey("id_aluno")]
         public virtual Aluno Aluno { get; set; }
 

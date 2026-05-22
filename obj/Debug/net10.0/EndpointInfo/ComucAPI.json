@@ -722,17 +722,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Nota"
+                "$ref": "#/components/schemas/NotaEditDTO"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/Nota"
+                "$ref": "#/components/schemas/NotaEditDTO"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/Nota"
+                "$ref": "#/components/schemas/NotaEditDTO"
               }
             }
           }
@@ -802,63 +802,6 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ChamadaResponseDTO"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ChamadaResponseDTO"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ChamadaResponseDTO"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/Presencas/registrar": {
-      "post": {
-        "tags": [
-          "Presencas"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChamadaRequestDTO"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChamadaRequestDTO"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ChamadaRequestDTO"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
             "description": "OK"
           }
         }
@@ -888,6 +831,69 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Presencas/{id}": {
+      "put": {
+        "tags": [
+          "Presencas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresencaEditDTO"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresencaEditDTO"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresencaEditDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Presencas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1279,52 +1285,6 @@
         },
         "additionalProperties": false
       },
-      "ChamadaRequestDTO": {
-        "type": "object",
-        "properties": {
-          "idAluno": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "idProfessor": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "data": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "presente": {
-            "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "ChamadaResponseDTO": {
-        "type": "object",
-        "properties": {
-          "idPresenca": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "nomeAluno": {
-            "type": "string",
-            "nullable": true
-          },
-          "data": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "presente": {
-            "type": "boolean"
-          },
-          "nomeProfessor": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "Funcionario": {
         "required": [
           "nome",
@@ -1376,6 +1336,11 @@
           },
           "nomeChamada": {
             "type": "string",
+            "nullable": true
+          },
+          "idBanda": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "alunos": {
@@ -1446,6 +1411,45 @@
           "descricao": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotaEditDTO": {
+        "type": "object",
+        "properties": {
+          "valorNota": {
+            "type": "number",
+            "format": "double"
+          },
+          "mes": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "musica": {
+            "type": "string",
+            "nullable": true
+          },
+          "descricao": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PresencaEditDTO": {
+        "type": "object",
+        "properties": {
+          "presente": {
+            "type": "boolean"
+          },
+          "nome": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false

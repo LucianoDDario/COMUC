@@ -45,14 +45,24 @@ namespace ComucAPI.Controllers
 
         // PUT: api/Nota/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutNota(int id, Nota nota)
+        public async Task<IActionResult> PutNota(int id, [FromBody] NotaEditDTO dto)
         {
-            if (id != nota.IdNota)
+            // 1. Busca a nota original no banco de dados
+            var notaNoBanco = await _context.Notas.FindAsync(id);
+
+            if (notaNoBanco == null)
             {
-                return BadRequest();
+                return NotFound(new { Mensagem = "Registro de nota não encontrado." });
             }
 
-            _context.Entry(nota).State = EntityState.Modified;
+            // 2. Atualiza os campos com os novos valores enviados pelo front-end
+            notaNoBanco.ValorNota = dto.ValorNota;
+            notaNoBanco.Mes = dto.Mes;
+            notaNoBanco.Musica = dto.Musica;
+            notaNoBanco.Descricao = dto.Descricao;
+
+            // 3. Define o estado como modificado para o EF gerar o comando UPDATE
+            _context.Entry(notaNoBanco).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +70,7 @@ namespace ComucAPI.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!NotaExists(id))
+                if (!_context.Notas.Any(e => e.IdNota == id))
                 {
                     return NotFound();
                 }
@@ -70,7 +80,7 @@ namespace ComucAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(new { Mensagem = "Nota atualizada com sucesso!" });
         }
 
         // POST: api/Nota
