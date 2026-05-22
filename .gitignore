@@ -1,1 +1,8 @@
 .vs/
+.vscode/
+*.user
+*.suo
+*.userosprefs
+
+appsettings.local.json
+secrets.json
