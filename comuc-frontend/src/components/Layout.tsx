@@ -120,7 +120,9 @@ export default function Layout() {
 
         {/* Página */}
         <main className="flex-1 p-6">
-          <Outlet />
+          <div className="max-w-5xl mx-auto">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
