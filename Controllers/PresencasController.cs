@@ -6,6 +6,7 @@ using ComucAPI.DTOs;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace ComucAPI.Controllers
 {
@@ -21,23 +22,22 @@ namespace ComucAPI.Controllers
         }
 
         // GET: api/Presencas/relatorio
-        // Retorna o relatório completo sabendo a turma, o aluno e o professor
         [HttpGet("relatorio")]
         public async Task<ActionResult> GetRelatorioChamada()
         {
             var listagem = await _context.Presencas
                 .Include(p => p.Aluno)
                 .Include(p => p.Professor)
-                .Include(p => p.Banda) // Inclui a banda na consulta
+                .Include(p => p.Banda)
                 .Select(p => new
                 {
                     IdPresenca = p.IdPresenca,
                     Data = p.Data,
                     Presente = p.Presente,
-                    TipoEvento = p.Nome, // Nome da chamada (Ex: Ensaio, Aula)
+                    TipoEvento = p.Nome,
                     NomeAluno = p.Aluno != null ? p.Aluno.Nome : "Desconhecido",
                     NomeProfessor = p.Professor != null ? p.Professor.Nome : "Desconhecido",
-                    NomeBanda = p.Banda != null ? p.Banda.Nome : "Ensaio Geral / Sem Turma" // Exibe o nome da banda
+                    NomeBanda = p.Banda != null ? p.Banda.Nome : "Ensaio Geral / Sem Turma"
                 })
                 .ToListAsync();
 
@@ -66,12 +66,18 @@ namespace ComucAPI.Controllers
                 }
             }
 
+            // CORREÇÃO DE PERFORMANCE: Buscar todos os alunos de uma vez (Evita N+1 Queries)
+            var idsAlunos = lote.Alunos.Select(a => a.IdAluno).ToList();
+            var alunosNoBanco = await _context.Alunos
+                .Where(a => idsAlunos.Contains(a.IdAluno))
+                .ToListAsync();
+
             var novasPresencas = new List<Presenca>();
 
-            // 3. Percorre a lista de alunos vinculando tudo
+            // 3. Percorre a lista de alunos (agora em memória) vinculando tudo
             foreach (var item in lote.Alunos)
             {
-                var aluno = await _context.Alunos.FindAsync(item.IdAluno);
+                var aluno = alunosNoBanco.FirstOrDefault(a => a.IdAluno == item.IdAluno);
 
                 if (aluno != null)
                 {
@@ -81,7 +87,7 @@ namespace ComucAPI.Controllers
                         Presente = item.Presente,
                         Professor = professor,
                         Aluno = aluno,
-                        Banda = banda, // <-- VINCULA A BANDA AQUI
+                        Banda = banda,
                         Nome = lote.NomeChamada
                     });
                 }
@@ -135,42 +141,43 @@ namespace ComucAPI.Controllers
         {
             int anoFiltro = ano ?? DateTime.Now.Year;
 
-            // 1. Monta a consulta inicial
+            // 1. Monta a consulta inicial de faltas
             var query = _context.Presencas
                 .Include(p => p.Aluno)
                 .Include(p => p.Banda)
                 .Where(p => p.Presente == false && p.Data.Year == anoFiltro)
                 .AsQueryable();
 
-            // 2. Aplica o filtro de Aluno (se enviado)
+            // 2. Filtro por Aluno
             if (idAluno.HasValue)
             {
-                query = query.Where(p => p.Aluno.IdAluno == idAluno.Value);
+                query = query.Where(p => p.Aluno != null && p.Aluno.IdAluno == idAluno.Value);
             }
 
-            // 3. Aplica o filtro de Banda (se enviado)
+            // 3. FILTRO INTELIGENTE DE BANDA (Hierárquico)
             if (idBanda.HasValue)
             {
-                query = query.Where(p => p.IdBanda == idBanda.Value);
+                var idsBandasFiltrar = await _context.Bandas
+                    .Where(b => b.IdBanda == idBanda.Value || b.banda_pai_id == idBanda.Value) // Nota: Verifique se BandaPaiId está mapeado exatamente assim na sua Model Banda
+                    .Select(b => b.IdBanda)
+                    .ToListAsync();
+
+                // CORREÇÃO CRÍTICA: p.IdBanda não existia na Model. Navegando via p.Banda.IdBanda.
+                query = query.Where(p => p.Banda != null && idsBandasFiltrar.Contains(p.Banda.IdBanda));
             }
 
-            // 4. Executa a busca no banco de dados
             var faltas = await query.ToListAsync();
 
-            // 5. Agrupamento Hierárquico (Mágica do C#)
+            // 4. Agrupamento para o Front-end
             var relatorio = faltas
-                // Primeiro agrupamos SÓ pelo aluno
+                .Where(p => p.Aluno != null) // Prevenção extra de nulos
                 .GroupBy(p => new { p.Aluno.IdAluno, p.Aluno.Nome })
                 .Select(grupoAluno => new
                 {
                     IdAluno = grupoAluno.Key.IdAluno,
                     NomeAluno = grupoAluno.Key.Nome,
                     Ano = anoFiltro,
-
-                    // Conta TODAS as faltas desse aluno, independente da banda
                     TotalFaltasGeral = grupoAluno.Count(),
-
-                    // Sub-agrupamento: separa as faltas desse aluno por banda
                     DetalhesPorTurma = grupoAluno
                         .GroupBy(p => p.Banda != null ? p.Banda.Nome : "Geral / Sem Turma")
                         .Select(grupoTurma => new

@@ -9,6 +9,7 @@ namespace ComucAPI.DTOs
         public DateTime DataNascimento { get; set; }
         public string Telefone { get; set; }
         public string CPF { get; set; }
+        public string RG { get; set; }
         public string Endereco { get; set; }
         public string NomePai { get; set; }
         public string NomeMae { get; set; }

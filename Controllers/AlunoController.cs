@@ -91,6 +91,7 @@ namespace ComucAPI.Controllers
                 DataNascimento = dto.DataNascimento,
                 Telefone = dto.Telefone,
                 CPF = dto.CPF,
+                RG = dto.RG,
                 Endereco = dto.Endereco,
                 NomePai = dto.NomePai,
                 NomeMae = dto.NomeMae,

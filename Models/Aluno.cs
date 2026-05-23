@@ -31,6 +31,11 @@ namespace ComucAPI.Models
         public string CPF { get; set; }
 
         [Required]
+        [MaxLength(9)]
+        [Column("rg")]
+        public string RG { get; set; }
+
+        [Required]
         [MaxLength(200)]
         [Column("endereco")]
         public string Endereco { get; set; }

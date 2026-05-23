@@ -20,15 +20,24 @@ namespace ComucAPI.Models
         public DateTime Data { get; set; }
 
         [Column("presenca")]
-        public bool Presente {  get; set; }
+        public bool Presente { get; set; }
 
-        [ForeignKey("id_banda")]
-        public virtual Banda Banda{ get; set; }
+        [Column("id_banda")]
+        public int? IdBanda { get; set; }
 
-        [ForeignKey("id_aluno")]
+        [Column("id_aluno")]
+        public int IdAluno { get; set; }
+
+        [Column("id_professor")]
+        public int IdProfessor { get; set; }
+
+        [ForeignKey("IdBanda")]
+        public virtual Banda Banda { get; set; }
+
+        [ForeignKey("IdAluno")]
         public virtual Aluno Aluno { get; set; }
 
-        [ForeignKey("id_professor")]
+        [ForeignKey("IdProfessor")]
         public virtual Professor Professor { get; set; }
     }
 }

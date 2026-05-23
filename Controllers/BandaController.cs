@@ -129,28 +129,53 @@ namespace ComucAPI.Controllers
             return _context.Bandas.Any(e => e.IdBanda == id);
         }
 
+        // GET: api/Banda/5/alunos
         [HttpGet("{id}/alunos")]
         public async Task<ActionResult> GetAlunosDaBanda(int id)
         {
-            // Busca a banda e já inclui a lista de alunos conectada a ela
+            // 1. Busca a banda selecionada pelo professor
             var banda = await _context.Bandas
                 .Include(b => b.Alunos)
+                .Include(b => b.SubTurmas) // Carrega as filhas, se houver
+                    .ThenInclude(sub => sub.Alunos) // Já traz os alunos das filhas
                 .FirstOrDefaultAsync(b => b.IdBanda == id);
 
             if (banda == null)
             {
-                return NotFound(new { Mensagem = "Banda não encontrada." });
+                return NotFound(new { Mensagem = "Banda/Turma não encontrada." });
             }
 
-            // Retorna apenas os dados que a tela precisa para montar a lista
-            var alunosParaChamada = banda.Alunos.Select(a => new
+            // 2. Prepara uma lista para guardar todos os alunos
+            var todosOsAlunos = new List<Aluno>();
+
+            // 3. Adiciona os alunos que estão diretamente nesta banda (se houver)
+            todosOsAlunos.AddRange(banda.Alunos);
+
+            // 4. Se essa banda tiver filhas (Ex: é a Banda Mirim Geral), adiciona os alunos das filhas também
+            if (banda.SubTurmas != null && banda.SubTurmas.Any())
             {
-                IdAluno = a.IdAluno, // Usando a propriedade IdBanda que atua como PK do seu model Aluno
-                Nome = a.Nome
-            }).ToList();
+                foreach (var subTurma in banda.SubTurmas)
+                {
+                    todosOsAlunos.AddRange(subTurma.Alunos);
+                }
+            }
+
+            // 5. Formata para o front-end, remove duplicados e coloca em ordem alfabética
+            var alunosParaChamada = todosOsAlunos
+                .Select(a => new
+                {
+                    IdAluno = a.IdAluno, // Garanta que o model está como IdAluno
+                    Nome = a.Nome
+                })
+                .GroupBy(a => a.IdAluno) // Evita que um aluno apareça duas vezes se ele fizer as duas turmas
+                .Select(g => g.First())
+                .OrderBy(a => a.Nome)
+                .ToList();
 
             return Ok(alunosParaChamada);
         }
+
+
     }
 
 }
