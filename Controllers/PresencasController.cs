@@ -133,51 +133,83 @@ namespace ComucAPI.Controllers
         }
 
         // GET: api/Presencas/relatorio-faltas
+        // Unificado: Retorna o total de faltas e o detalhamento das datas.
+        // Aceita filtros combinados de Aluno, Banda, Ano e Mês.
         [HttpGet("relatorio-faltas")]
-        public async Task<ActionResult> GetFaltasPorAno(
-            [FromQuery] int? ano,
+        public async Task<ActionResult> GetFaltasCompleto(
             [FromQuery] int? idAluno,
-            [FromQuery] int? idBanda)
+            [FromQuery] int? idBanda,
+            [FromQuery] int? ano,
+            [FromQuery] int? mes)
         {
+            // Se o ano não for passado, assume o ano atual
             int anoFiltro = ano ?? DateTime.Now.Year;
 
-            // 1. Monta a consulta inicial de faltas
+            // 1. Monta a consulta inicial (apenas faltas e alunos válidos no ano selecionado)
             var query = _context.Presencas
                 .Include(p => p.Aluno)
                 .Include(p => p.Banda)
-                .Where(p => p.Presente == false && p.Data.Year == anoFiltro)
+                .Where(p => p.Presente == false && p.Aluno != null && p.Data.Year == anoFiltro)
                 .AsQueryable();
 
-            // 2. Filtro por Aluno
-            if (idAluno.HasValue)
+            // 2. Filtro por Mês
+            if (mes.HasValue)
             {
-                query = query.Where(p => p.Aluno != null && p.Aluno.IdAluno == idAluno.Value);
+                query = query.Where(p => p.Data.Month == mes.Value);
             }
 
-            // 3. FILTRO INTELIGENTE DE BANDA (Hierárquico)
+            // 3. Filtro por Aluno
+            if (idAluno.HasValue)
+            {
+                query = query.Where(p => p.Aluno.IdAluno == idAluno.Value);
+            }
+
+            // 4. Filtro por Banda (Hierárquico: Banda atual + Sub-turmas)
             if (idBanda.HasValue)
             {
                 var idsBandasFiltrar = await _context.Bandas
-                    .Where(b => b.IdBanda == idBanda.Value || b.banda_pai_id == idBanda.Value) // Nota: Verifique se BandaPaiId está mapeado exatamente assim na sua Model Banda
+                    .Where(b => b.IdBanda == idBanda.Value || b.banda_pai_id == idBanda.Value)
                     .Select(b => b.IdBanda)
                     .ToListAsync();
 
-                // CORREÇÃO CRÍTICA: p.IdBanda não existia na Model. Navegando via p.Banda.IdBanda.
                 query = query.Where(p => p.Banda != null && idsBandasFiltrar.Contains(p.Banda.IdBanda));
             }
 
+            // Vai ao banco e traz os dados brutos filtrados
             var faltas = await query.ToListAsync();
 
-            // 4. Agrupamento para o Front-end
+            // 5. Tratamento de Aluno Específico sem Faltas (Retorna zero em vez de lista vazia)
+            if (idAluno.HasValue && !faltas.Any())
+            {
+                var aluno = await _context.Alunos.FindAsync(idAluno.Value);
+                if (aluno == null) return NotFound(new { Mensagem = "Aluno não encontrado." });
+
+                return Ok(new List<object>
+                {
+                    new
+                    {
+                        IdAluno = aluno.IdAluno,
+                        NomeAluno = aluno.Nome,
+                        Ano = anoFiltro,
+                        TotalFaltasGeral = 0,
+                        DetalhesPorTurma = new List<object>() // Array vazio de detalhes
+                    }
+                });
+            }
+
+            // 6. Agrupamento Unificado: Total Geral + Detalhamento
             var relatorio = faltas
-                .Where(p => p.Aluno != null) // Prevenção extra de nulos
                 .GroupBy(p => new { p.Aluno.IdAluno, p.Aluno.Nome })
                 .Select(grupoAluno => new
                 {
                     IdAluno = grupoAluno.Key.IdAluno,
                     NomeAluno = grupoAluno.Key.Nome,
                     Ano = anoFiltro,
+
+                    // O total geral que você queria:
                     TotalFaltasGeral = grupoAluno.Count(),
+
+                    // O detalhamento histórico:
                     DetalhesPorTurma = grupoAluno
                         .GroupBy(p => p.Banda != null ? p.Banda.Nome : "Geral / Sem Turma")
                         .Select(grupoTurma => new

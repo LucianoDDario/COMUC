@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ComucAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b6ad4ae2af83e3543cafb93cf057db3f368474a8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cf2181bac661e2cdfce609ebb43e95c31b6f5d42")]
 [assembly: System.Reflection.AssemblyProductAttribute("ComucAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ComucAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
