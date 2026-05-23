@@ -125,5 +125,67 @@ namespace ComucAPI.Controllers
 
             return NoContent();
         }
+
+        // GET: api/Presencas/relatorio-faltas
+        [HttpGet("relatorio-faltas")]
+        public async Task<ActionResult> GetFaltasPorAno(
+            [FromQuery] int? ano,
+            [FromQuery] int? idAluno,
+            [FromQuery] int? idBanda)
+        {
+            int anoFiltro = ano ?? DateTime.Now.Year;
+
+            // 1. Monta a consulta inicial
+            var query = _context.Presencas
+                .Include(p => p.Aluno)
+                .Include(p => p.Banda)
+                .Where(p => p.Presente == false && p.Data.Year == anoFiltro)
+                .AsQueryable();
+
+            // 2. Aplica o filtro de Aluno (se enviado)
+            if (idAluno.HasValue)
+            {
+                query = query.Where(p => p.Aluno.IdAluno == idAluno.Value);
+            }
+
+            // 3. Aplica o filtro de Banda (se enviado)
+            if (idBanda.HasValue)
+            {
+                query = query.Where(p => p.IdBanda == idBanda.Value);
+            }
+
+            // 4. Executa a busca no banco de dados
+            var faltas = await query.ToListAsync();
+
+            // 5. Agrupamento Hierárquico (Mágica do C#)
+            var relatorio = faltas
+                // Primeiro agrupamos SÓ pelo aluno
+                .GroupBy(p => new { p.Aluno.IdAluno, p.Aluno.Nome })
+                .Select(grupoAluno => new
+                {
+                    IdAluno = grupoAluno.Key.IdAluno,
+                    NomeAluno = grupoAluno.Key.Nome,
+                    Ano = anoFiltro,
+
+                    // Conta TODAS as faltas desse aluno, independente da banda
+                    TotalFaltasGeral = grupoAluno.Count(),
+
+                    // Sub-agrupamento: separa as faltas desse aluno por banda
+                    DetalhesPorTurma = grupoAluno
+                        .GroupBy(p => p.Banda != null ? p.Banda.Nome : "Geral / Sem Turma")
+                        .Select(grupoTurma => new
+                        {
+                            Turma = grupoTurma.Key,
+                            TotalFaltasNaTurma = grupoTurma.Count(),
+                            DatasDasFaltas = grupoTurma.Select(p => p.Data.ToString("dd/MM/yyyy")).ToList()
+                        })
+                        .OrderBy(t => t.Turma)
+                        .ToList()
+                })
+                .OrderBy(r => r.NomeAluno)
+                .ToList();
+
+            return Ok(relatorio);
+        }
     }
 }
