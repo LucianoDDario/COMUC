@@ -740,4 +740,3 @@ C:\Dev\COMUC\obj\Debug\net10.0\swae.build.ex.cache
 C:\Dev\COMUC\obj\Debug\net10.0\ComucAPI.csproj.Up2Date
 C:\Dev\COMUC\obj\Debug\net10.0\ComucAPI.genruntimeconfig.cache
 C:\Dev\COMUC\obj\Debug\net10.0\ref\ComucAPI.dll
-C:\Dev\COMUC\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
