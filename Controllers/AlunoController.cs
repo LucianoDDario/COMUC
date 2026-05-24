@@ -24,9 +24,19 @@ namespace ComucAPI.Controllers
 
         // GET: api/Aluno
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Aluno>>> GetAlunos()
+        public async Task<ActionResult> GetAlunos()
         {
-            return await _context.Alunos.ToListAsync();
+            var alunos = await _context.Alunos
+                .Include(a => a.Bandas)
+                .Select(a => new
+                {
+                    IdAluno = a.IdAluno,
+                    Nome = a.Nome,
+                    Bandas = a.Bandas.Select(b => new { b.IdBanda, b.Nome }).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(alunos);
         }
 
         // GET: api/Aluno/5
