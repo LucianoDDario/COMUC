@@ -21,7 +21,6 @@ const alunoSchema = z.object({
   endereco: z.string().min(1, 'Endereço obrigatório'),
   nomePai: z.string().optional(),
   nomeMae: z.string().optional(),
-  documentoResponsavel: z.string().optional(),
   bolsista: z.enum(['sim', 'nao']),
   dataInicio: z.string().optional(),
   possuiInstrumento: z.enum(['sim', 'nao']),
@@ -92,7 +91,6 @@ export default function AlunoForm() {
         endereco: alunoExistente.endereco ?? '',
         nomePai: alunoExistente.nomePai ?? '',
         nomeMae: alunoExistente.nomeMae ?? '',
-        documentoResponsavel: '',
         bolsista: alunoExistente.bolsista ? 'sim' : 'nao',
         dataInicio: alunoExistente.dataInicio?.split('T')[0] ?? '',
         possuiInstrumento: alunoExistente.possuiInstrumento ? 'sim' : 'nao',
@@ -300,16 +298,6 @@ export default function AlunoForm() {
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Documento do Responsável</label>
-              <input
-                type="text"
-                placeholder="CPF ou RG"
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
-                {...register('documentoResponsavel')}
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-700">Bolsista?</label>
               <div className="flex flex-col gap-1">
                 <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
@@ -384,6 +372,20 @@ export default function AlunoForm() {
                     )
                   })}
                 </div>
+              </div>
+            )}
+
+            {isEdit && alunoExistente?.bandas?.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-gray-700">Bandas</label>
+                <div className="flex flex-wrap gap-2">
+                  {alunoExistente.bandas.map((b: Banda) => (
+                    <span key={b.idBanda} className="text-xs px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 bg-gray-50">
+                      {b.nome}
+                    </span>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400">Para alterar as bandas, use a página de Gestão de Bandas.</p>
               </div>
             )}
 

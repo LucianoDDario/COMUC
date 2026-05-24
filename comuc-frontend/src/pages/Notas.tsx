@@ -33,7 +33,8 @@ const MESES = [
   { value: 12, label: 'Dezembro' },
 ]
 
-const ANOS = [2024, 2025, 2026]
+const anoAtual = new Date().getFullYear()
+const ANOS = Array.from({ length: anoAtual - 2023 }, (_, i) => 2024 + i)
 
 
 async function fetchMedias(mes: number, ano: number): Promise<NotaMedia[]> {
@@ -46,7 +47,7 @@ export default function Notas() {
   const now = new Date()
 
   const [mes, setMes] = useState(now.getMonth() + 1)
-  const [ano, setAno] = useState(now.getFullYear())
+  const [ano, setAno] = useState(anoAtual)
   const [editingAluno, setEditingAluno] = useState<number | null>(null)
   const [editValues, setEditValues] = useState<Record<number, string>>({})
 
