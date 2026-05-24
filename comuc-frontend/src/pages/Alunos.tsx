@@ -15,8 +15,18 @@ interface Aluno {
   bandas: Banda[]
 }
 
+interface FaltaAluno {
+  idAluno: number
+  totalFaltasGeral: number
+}
+
 async function fetchAlunos(): Promise<Aluno[]> {
   const res = await api.get('/Aluno')
+  return res.data
+}
+
+async function fetchFaltas(ano: number): Promise<FaltaAluno[]> {
+  const res = await api.get('/Presencas/relatorio-faltas', { params: { ano } })
   return res.data
 }
 
@@ -29,10 +39,19 @@ export default function Alunos() {
   const [bandasSelecionadas, setBandasSelecionadas] = useState<string[]>([])
   const filtrarRef = useRef<HTMLDivElement>(null)
 
+  const anoAtual = new Date().getFullYear()
+
   const { data: alunos = [], isLoading } = useQuery({
     queryKey: ['alunos'],
     queryFn: fetchAlunos,
   })
+
+  const { data: faltas = [] } = useQuery<FaltaAluno[]>({
+    queryKey: ['faltas', anoAtual],
+    queryFn: () => fetchFaltas(anoAtual),
+  })
+
+  const faltasMap = Object.fromEntries(faltas.map(f => [f.idAluno, f.totalFaltasGeral]))
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => api.delete(`/Aluno/${id}`),
@@ -168,6 +187,7 @@ export default function Alunos() {
               <tr>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Nome Completo</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Banda</th>
+                <th className="text-left px-5 py-3 font-medium text-gray-700">Faltas</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Ações</th>
               </tr>
             </thead>
@@ -180,6 +200,7 @@ export default function Alunos() {
                       ? <div className="flex flex-col gap-0.5">{aluno.bandas.map(b => <span key={b.idBanda}>{b.nome}</span>)}</div>
                       : '—'}
                   </td>
+                  <td className="px-5 py-3 text-gray-600">{faltasMap[aluno.idAluno] ?? 0}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">
                       <button
