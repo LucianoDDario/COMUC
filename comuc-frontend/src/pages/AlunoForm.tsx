@@ -17,7 +17,7 @@ const alunoSchema = z.object({
   dataNascimento: z.string().min(1, 'Data de nascimento obrigatória'),
   telefone: z.string().min(1, 'Telefone obrigatório').max(11, 'Telefone deve ter no máximo 11 dígitos'),
   cpf: z.string().min(11, 'CPF deve ter 11 dígitos').max(11, 'CPF deve ter 11 dígitos'),
-  rg: z.string().optional(),
+  rg: z.string().max(9, 'RG deve ter no máximo 9 caracteres').optional(),
   endereco: z.string().min(1, 'Endereço obrigatório'),
   nomePai: z.string().optional(),
   nomeMae: z.string().optional(),
@@ -88,7 +88,7 @@ export default function AlunoForm() {
         dataNascimento: alunoExistente.dataNascimento?.split('T')[0] ?? '',
         telefone: alunoExistente.telefone ?? '',
         cpf: alunoExistente.cpf ?? '',
-        rg: '',
+        rg: alunoExistente.rg ?? '',
         endereco: alunoExistente.endereco ?? '',
         nomePai: alunoExistente.nomePai ?? '',
         nomeMae: alunoExistente.nomeMae ?? '',
@@ -246,6 +246,7 @@ export default function AlunoForm() {
               <input
                 type="text"
                 placeholder="12.345.678-9"
+                maxLength={9}
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
                 {...register('rg')}
               />
