@@ -118,10 +118,11 @@ namespace ComucAPI.Controllers
         [HttpGet("medias")]
         public async Task<ActionResult> GetMedias([FromQuery] int? mes, [FromQuery] int? ano)
         {
-            // 1. Criamos a consulta básica (sem executar ainda)
+            // 1. Criamos a consulta básica filtrando apenas alunos bolsistas
             var query = _context.Notas
                 .Include(n => n.Aluno)
                 .Include(n => n.Professor)
+                .Where(n => n.Aluno.Bolsista == true)
                 .AsQueryable();
 
             // 2. Se o front-end passou o mês, adiciona o filtro na consulta SQL
