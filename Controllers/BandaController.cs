@@ -28,10 +28,13 @@ namespace ComucAPI.Controllers
         {
             var bandas = await _context.Bandas
                 .Include(b => b.Alunos)
+                .Include(b => b.Professor)
                 .Select(b => new
                 {
                     IdBanda = b.IdBanda,
                     Nome = b.Nome,
+                    IdProfessor = b.id_professor,
+                    NomeProfessor = b.Professor != null ? b.Professor.Nome : "Sem professor",
                     TotalAlunos = b.Alunos.Count
                 })
                 .ToListAsync();
