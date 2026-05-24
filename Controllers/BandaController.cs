@@ -24,9 +24,19 @@ namespace ComucAPI.Controllers
 
         // GET: api/Banda
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Banda>>> GetBandas()
+        public async Task<ActionResult> GetBandas()
         {
-            return await _context.Bandas.ToListAsync();
+            var bandas = await _context.Bandas
+                .Include(b => b.Alunos)
+                .Select(b => new
+                {
+                    IdBanda = b.IdBanda,
+                    Nome = b.Nome,
+                    TotalAlunos = b.Alunos.Count
+                })
+                .ToListAsync();
+
+            return Ok(bandas);
         }
 
         // GET: api/Banda/5
