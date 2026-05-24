@@ -134,6 +134,31 @@ namespace ComucAPI.Controllers
             return NoContent();
         }
 
+        // POST: api/Banda/5/vincular-aluno
+        [HttpPost("{id}/vincular-aluno")]
+        public async Task<IActionResult> VincularAluno(int id, [FromBody] VincularAlunoDTO dto)
+        {
+            var banda = await _context.Bandas
+                .Include(b => b.Alunos)
+                .FirstOrDefaultAsync(b => b.IdBanda == id);
+
+            if (banda == null)
+                return NotFound(new { Mensagem = "Banda não encontrada." });
+
+            var aluno = await _context.Alunos.FindAsync(dto.IdAluno);
+
+            if (aluno == null)
+                return NotFound(new { Mensagem = "Aluno não encontrado." });
+
+            if (banda.Alunos.Any(a => a.IdAluno == dto.IdAluno))
+                return Conflict(new { Mensagem = "Aluno já está vinculado a esta banda." });
+
+            banda.Alunos.Add(aluno);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Mensagem = "Aluno vinculado com sucesso." });
+        }
+
         private bool BandaExists(int id)
         {
             return _context.Bandas.Any(e => e.IdBanda == id);
