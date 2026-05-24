@@ -150,6 +150,7 @@ namespace ComucAPI.Controllers
                     Musica = grupo.Key.Musica,
                     DetalhesNotas = grupo.Select(n => new
                     {
+                        IdNota = n.IdNota,
                         Professor = n.Professor.Nome,
                         Nota = n.ValorNota
                     }).ToList(),
