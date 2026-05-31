@@ -6,4 +6,4 @@
 
 appsettings.local.json
 secrets.json
-/.env
+.env
