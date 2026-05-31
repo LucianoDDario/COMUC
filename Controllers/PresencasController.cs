@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ComucAPI.Data;
 using ComucAPI.Models;
@@ -10,6 +11,7 @@ using System;
 
 namespace ComucAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PresencasController : ControllerBase
@@ -44,7 +46,8 @@ namespace ComucAPI.Controllers
             return Ok(listagem);
         }
 
-        // POST: api/Presencas/registrar-lote
+        // POST: api/Presencas/registrar-lote — apenas Professor pode registrar presença (Regra UC_04)
+        [Authorize(Roles = "Professor")]
         [HttpPost("registrar-lote")]
         public async Task<IActionResult> RegistrarChamadaEmLote([FromBody] LoteChamadaRequest lote)
         {

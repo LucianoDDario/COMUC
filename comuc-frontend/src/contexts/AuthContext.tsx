@@ -4,6 +4,7 @@ interface AuthUser {
   id: number
   nome: string
   tipoUsuario: 'Professor' | 'Funcionario'
+  token: string
 }
 
 interface AuthContextValue {

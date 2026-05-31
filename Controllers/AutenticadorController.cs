@@ -1,10 +1,12 @@
-﻿using BCrypt.Net;
+using BCrypt.Net;
 using ComucAPI.Data;
 using ComucAPI.DTOs;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ComucAPI.Controllers
 {
@@ -13,57 +15,71 @@ namespace ComucAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ComucDbContext _context;
+        private readonly string _jwtSecret;
 
-        public AuthController(ComucDbContext context)
+        public AuthController(ComucDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")!;
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] DTOs.LoginRequest request)
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            // 1. Tenta autenticar como Professor usando o Nome
+            // 1. Tenta autenticar como Professor
             var professor = await _context.Professores
                 .FirstOrDefaultAsync(p => p.Nome == request.Nome);
 
-            if (professor != null)
+            if (professor != null && BCrypt.Net.BCrypt.Verify(request.Senha, professor.Senha))
             {
-                // Verifica o hash da senha
-                bool senhaValida = BCrypt.Net.BCrypt.Verify(request.Senha, professor.Senha);
-                if (senhaValida)
+                var token = GerarToken(professor.IdProfessor, professor.Nome, "Professor");
+                return Ok(new
                 {
-                    return Ok(new
-                    {
-                        Mensagem = "Login realizado com sucesso",
-                        TipoUsuario = "Professor",
-                        Id = professor.IdProfessor,
-                        Nome = professor.Nome
-                    });
-                }
+                    Token = token,
+                    Id = professor.IdProfessor,
+                    Nome = professor.Nome,
+                    TipoUsuario = "Professor",
+                });
             }
 
-            // 2. Tenta autenticar como Funcionário usando o nome
+            // 2. Tenta autenticar como Funcionário
             var funcionario = await _context.Funcionarios
                 .FirstOrDefaultAsync(f => f.nome == request.Nome);
 
-            if (funcionario != null)
+            if (funcionario != null && BCrypt.Net.BCrypt.Verify(request.Senha, funcionario.senha))
             {
-                // Verifica o hash da senha (notando que a propriedade está minúscula no model)
-                bool senhaValida = BCrypt.Net.BCrypt.Verify(request.Senha, funcionario.senha);
-                if (senhaValida)
+                var token = GerarToken(funcionario.IdFuncionario, funcionario.nome, "Funcionario");
+                return Ok(new
                 {
-                    return Ok(new
-                    {
-                        Mensagem = "Login realizado com sucesso",
-                        TipoUsuario = "Funcionario",
-                        Id = funcionario.IdFuncionario,
-                        Nome = funcionario.nome
-                    });
-                }
+                    Token = token,
+                    Id = funcionario.IdFuncionario,
+                    Nome = funcionario.nome,
+                    TipoUsuario = "Funcionario",
+                });
             }
 
-            // 3. Se não encontrou ou a senha está errada
             return Unauthorized(new { Mensagem = "Usuário ou senha inválidos." });
+        }
+
+        private string GerarToken(int id, string nome, string tipoUsuario)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                new Claim(ClaimTypes.Name, nome),
+                new Claim(ClaimTypes.Role, tipoUsuario),
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSecret));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(8),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
