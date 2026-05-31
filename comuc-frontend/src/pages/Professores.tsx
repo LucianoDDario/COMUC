@@ -20,6 +20,7 @@ export default function Professores() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null)
+  const [erroDelete, setErroDelete] = useState('')
 
   const { data: professores = [], isLoading } = useQuery<Professor[]>({
     queryKey: ['professores-list'],
@@ -31,7 +32,9 @@ export default function Professores() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['professores-list'] })
       setConfirmDelete(null)
+      setErroDelete('')
     },
+    onError: () => setErroDelete('Erro ao excluir professor. Tente novamente.'),
   })
 
   return (
@@ -100,9 +103,10 @@ export default function Professores() {
             <p className="text-sm text-gray-500 mb-5">
               Tem certeza que deseja excluir este professor? Esta ação não pode ser desfeita.
             </p>
+            {erroDelete && <p className="text-xs text-red-500 mb-3">{erroDelete}</p>}
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => setConfirmDelete(null)}
+                onClick={() => { setConfirmDelete(null); setErroDelete('') }}
                 className="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
               >
                 Cancelar

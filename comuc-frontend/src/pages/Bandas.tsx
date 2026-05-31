@@ -49,6 +49,10 @@ export default function Bandas() {
   const [idProfessor, setIdProfessor] = useState('')
   const [nomeEditar, setNomeEditar] = useState('')
   const [idAlunoVincular, setIdAlunoVincular] = useState('')
+  const [erroCriar, setErroCriar] = useState('')
+  const [erroEditar, setErroEditar] = useState('')
+  const [erroVincular, setErroVincular] = useState('')
+  const [erroDelete, setErroDelete] = useState('')
 
   const { data: bandas = [], isLoading } = useQuery<Banda[]>({
     queryKey: ['bandas'],
@@ -72,7 +76,9 @@ export default function Bandas() {
       setModalAdicionar(false)
       setNomeBanda('')
       setIdProfessor('')
+      setErroCriar('')
     },
+    onError: () => setErroCriar('Erro ao adicionar banda. Tente novamente.'),
   })
 
   const editarMutation = useMutation({
@@ -86,7 +92,9 @@ export default function Bandas() {
       queryClient.invalidateQueries({ queryKey: ['bandas'] })
       setModalEditar(null)
       setNomeEditar('')
+      setErroEditar('')
     },
+    onError: () => setErroEditar('Erro ao salvar banda. Tente novamente.'),
   })
 
   const vincularMutation = useMutation({
@@ -96,7 +104,9 @@ export default function Bandas() {
       queryClient.invalidateQueries({ queryKey: ['bandas'] })
       setModalVincular(null)
       setIdAlunoVincular('')
+      setErroVincular('')
     },
+    onError: () => setErroVincular('Erro ao vincular aluno. Verifique se ele já não está na banda.'),
   })
 
   const deleteMutation = useMutation({
@@ -104,7 +114,9 @@ export default function Bandas() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bandas'] })
       setConfirmDelete(null)
+      setErroDelete('')
     },
+    onError: () => setErroDelete('Erro ao excluir banda. Tente novamente.'),
   })
 
   function abrirEditar(banda: Banda) {
@@ -201,9 +213,10 @@ export default function Bandas() {
                 </select>
               </div>
             </div>
+            {erroCriar && <p className="text-xs text-red-500 mt-3">{erroCriar}</p>}
             <div className="flex justify-end gap-2 mt-5">
               <button
-                onClick={() => { setModalAdicionar(false); setNomeBanda(''); setIdProfessor('') }}
+                onClick={() => { setModalAdicionar(false); setNomeBanda(''); setIdProfessor(''); setErroCriar('') }}
                 className="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
               >
                 Cancelar
@@ -238,9 +251,10 @@ export default function Bandas() {
                 ))}
               </select>
             </div>
+            {erroVincular && <p className="text-xs text-red-500 mt-3">{erroVincular}</p>}
             <div className="flex justify-end gap-2 mt-5">
               <button
-                onClick={() => { setModalVincular(null); setIdAlunoVincular('') }}
+                onClick={() => { setModalVincular(null); setIdAlunoVincular(''); setErroVincular('') }}
                 className="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
               >
                 Cancelar
@@ -271,9 +285,10 @@ export default function Bandas() {
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
               />
             </div>
+            {erroEditar && <p className="text-xs text-red-500 mt-3">{erroEditar}</p>}
             <div className="flex justify-end gap-2 mt-5">
               <button
-                onClick={() => { setModalEditar(null); setNomeEditar('') }}
+                onClick={() => { setModalEditar(null); setNomeEditar(''); setErroEditar('') }}
                 className="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
               >
                 Cancelar
@@ -298,9 +313,10 @@ export default function Bandas() {
             <p className="text-sm text-gray-500 mb-5">
               Tem certeza que deseja excluir esta banda? Esta ação não pode ser desfeita.
             </p>
+            {erroDelete && <p className="text-xs text-red-500 mb-3">{erroDelete}</p>}
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => setConfirmDelete(null)}
+                onClick={() => { setConfirmDelete(null); setErroDelete('') }}
                 className="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
               >
                 Cancelar

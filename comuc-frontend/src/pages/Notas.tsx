@@ -50,6 +50,7 @@ export default function Notas() {
   const [ano, setAno] = useState(anoAtual)
   const [editingAluno, setEditingAluno] = useState<number | null>(null)
   const [editValues, setEditValues] = useState<Record<number, string>>({})
+  const [erroEditar, setErroEditar] = useState('')
 
   const { data: medias = [], isLoading } = useQuery<NotaMedia[]>({
     queryKey: ['notas-medias', mes, ano],
@@ -72,11 +73,13 @@ export default function Notas() {
         )
       )
     },
-    onSettled: () => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notas-medias'] })
       setEditingAluno(null)
       setEditValues({})
+      setErroEditar('')
     },
+    onError: () => setErroEditar('Erro ao salvar notas. Tente novamente.'),
   })
 
   function iniciarEdicao(row: NotaMedia) {
@@ -231,6 +234,9 @@ export default function Notas() {
               })}
             </tbody>
           </table>
+        )}
+        {erroEditar && (
+          <p className="text-xs text-red-500 px-5 py-3 border-t border-gray-100">{erroEditar}</p>
         )}
       </div>
     </div>

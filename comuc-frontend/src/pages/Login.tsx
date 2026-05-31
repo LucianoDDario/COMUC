@@ -40,12 +40,10 @@ export default function Login() {
       })
       navigate('/presenca', {replace: true})
     } catch (error: any) {
-      console.error("ERRO COMPLETO:", error);
-      // Se for erro de rede/CORS ou 404, não vai ter 'response'
       if (!error.response) {
-        setErro('Erro de conexão com o servidor. Verifique o CORS.');
+        setErro('Erro de conexão com o servidor. Tente novamente.')
       } else {
-        setErro('Usuário ou senha inválidos.');
+        setErro('Usuário ou senha inválidos.')
       }
     }
   }
