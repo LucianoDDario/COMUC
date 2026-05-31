@@ -11,7 +11,9 @@ const createSchema = z.object({
   nome: z.string().min(1, 'Nome obrigatório'),
   senha: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
   cpf: z.string().max(11, 'CPF deve ter 11 dígitos').optional(),
+  rg: z.string().max(9, 'RG deve ter no máximo 9 caracteres').optional(),
   telefone: z.string().max(20).optional(),
+  dataNascimento: z.string().optional(),
   endereco: z.string().optional(),
 })
 
@@ -19,11 +21,13 @@ const editSchema = z.object({
   nome: z.string().min(1, 'Nome obrigatório'),
   senha: z.string().optional(),
   cpf: z.string().max(11, 'CPF deve ter 11 dígitos').optional(),
+  rg: z.string().max(9, 'RG deve ter no máximo 9 caracteres').optional(),
   telefone: z.string().max(20).optional(),
+  dataNascimento: z.string().optional(),
   endereco: z.string().optional(),
 })
 
-type ProfessorFormData = { nome: string; senha?: string; cpf?: string; telefone?: string; endereco?: string }
+type ProfessorFormData = { nome: string; senha?: string; cpf?: string; rg?: string; telefone?: string; dataNascimento?: string; endereco?: string }
 
 async function fetchProfessor(id: number) {
   const res = await api.get(`/Professors/${id}`)
@@ -52,7 +56,7 @@ export default function ProfessorForm() {
     formState: { errors },
   } = useForm<ProfessorFormData>({
     resolver: zodResolver(isEdit ? editSchema : createSchema),
-    defaultValues: { nome: '', senha: '', cpf: '', telefone: '', endereco: '' },
+    defaultValues: { nome: '', senha: '', cpf: '', rg: '', telefone: '', dataNascimento: '', endereco: '' },
   })
 
   useEffect(() => {
@@ -60,7 +64,9 @@ export default function ProfessorForm() {
       reset({
         nome: professorExistente.nome ?? '',
         cpf: professorExistente.cpf ?? '',
+        rg: professorExistente.rg ?? '',
         telefone: professorExistente.telefone ?? '',
+        dataNascimento: professorExistente.dataNascimento?.split('T')[0] ?? '',
         endereco: professorExistente.endereco ?? '',
       })
     }
@@ -71,9 +77,24 @@ export default function ProfessorForm() {
     setErro('')
     try {
       if (isEdit && professorId) {
-        await api.put(`/Professors/${professorId}`, { nome: data.nome, cpf: data.cpf, telefone: data.telefone, endereco: data.endereco })
+        await api.put(`/Professors/${professorId}`, {
+          nome: data.nome,
+          cpf: data.cpf,
+          rg: data.rg,
+          telefone: data.telefone,
+          dataNascimento: data.dataNascimento ? new Date(data.dataNascimento + 'T00:00:00Z').toISOString() : null,
+          endereco: data.endereco,
+        })
       } else {
-        await api.post('/Professors', { nome: data.nome, senha: data.senha, cpf: data.cpf, telefone: data.telefone, endereco: data.endereco })
+        await api.post('/Professors', {
+          nome: data.nome,
+          senha: data.senha,
+          cpf: data.cpf,
+          rg: data.rg,
+          telefone: data.telefone,
+          dataNascimento: data.dataNascimento ? new Date(data.dataNascimento + 'T00:00:00Z').toISOString() : null,
+          endereco: data.endereco,
+        })
       }
       navigate('/professores')
     } catch {
@@ -136,6 +157,27 @@ export default function ProfessorForm() {
               {...register('cpf')}
             />
             {errors.cpf && <span className="text-xs text-red-500">{errors.cpf.message}</span>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">RG</label>
+            <input
+              type="text"
+              placeholder="12.345.678-9"
+              maxLength={9}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
+              {...register('rg')}
+            />
+            {errors.rg && <span className="text-xs text-red-500">{errors.rg.message}</span>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Data de Nascimento</label>
+            <input
+              type="date"
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
+              {...register('dataNascimento')}
+            />
           </div>
 
           <div className="flex flex-col gap-1">

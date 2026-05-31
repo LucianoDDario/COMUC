@@ -29,6 +29,13 @@ namespace ComucAPI.Models
         [Column("telefone")]
         public string? Telefone { get; set; }
 
+        [MaxLength(9)]
+        [Column("rg")]
+        public string? RG { get; set; }
+
+        [Column("data_nascimento")]
+        public DateTime? DataNascimento { get; set; }
+
         [MaxLength(255)]
         [Column("endereco")]
         public string? Endereco { get; set; }
