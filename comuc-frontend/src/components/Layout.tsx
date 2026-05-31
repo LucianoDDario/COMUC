@@ -95,10 +95,14 @@ export default function Layout() {
               <Home size={15} />
               Início
             </button>
-            <span className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5">
+            <button
+              type="button"
+              onClick={() => navigate('/perfil')}
+              className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
+            >
               <User size={15} />
-              {user?.nome ?? 'Perfil do Usuário'}
-            </span>
+              <span className="capitalize">{user?.nome ?? 'Perfil do Usuário'}</span>
+            </button>
             <button
               onClick={handleLogout}
               className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"

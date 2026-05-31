@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ComucAPI.Data;
+using ComucAPI.DTOs;
 using ComucAPI.Models;
 
 namespace ComucAPI.Controllers
@@ -91,6 +92,24 @@ namespace ComucAPI.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetFuncionario", new { id = funcionario.IdFuncionario }, funcionario);
+        }
+
+        // PUT: api/Funcionario/5/senha
+        [HttpPut("{id}/senha")]
+        public async Task<IActionResult> AlterarSenha(int id, [FromBody] AlterarSenhaDTO dto)
+        {
+            var funcionario = await _context.Funcionarios.FindAsync(id);
+
+            if (funcionario == null)
+                return NotFound();
+
+            if (BCrypt.Net.BCrypt.Verify(dto.NovaSenha, funcionario.senha))
+                return BadRequest(new { Mensagem = "A nova senha não pode ser igual à senha atual." });
+
+            funcionario.senha = BCrypt.Net.BCrypt.HashPassword(dto.NovaSenha);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         // DELETE: api/Funcionario/5

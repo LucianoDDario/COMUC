@@ -9,6 +9,7 @@ import Professores from '@/pages/Professores'
 import Bandas from '@/pages/Bandas'
 import AlunoForm from '@/pages/AlunoForm'
 import ProfessorForm from '@/pages/ProfessorForm'
+import Perfil from '@/pages/Perfil'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user } = useAuth()
@@ -35,6 +36,7 @@ function AppRoutes() {
         <Route path="/professores/novo" element={<ProfessorForm />} />
         <Route path="/professores/:id/editar" element={<ProfessorForm />} />
         <Route path="/bandas" element={<Bandas />} />
+        <Route path="/perfil" element={<Perfil />} />
         <Route path="/" element={<Navigate to="/presenca" replace />} />
       </Route>
       <Route path="*" element={<Navigate to="/login" replace />} />

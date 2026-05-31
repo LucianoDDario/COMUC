@@ -70,7 +70,7 @@ export default function Professores() {
             <tbody className="divide-y divide-gray-100">
               {professores.map(professor => (
                 <tr key={professor.idProfessor} className="hover:bg-gray-50">
-                  <td className="px-5 py-3 font-medium text-gray-900">{professor.nome}</td>
+                  <td className="px-5 py-3 font-medium text-gray-900 capitalize">{professor.nome}</td>
                   <td className="px-5 py-3 text-gray-600">{professor.cpf ?? '—'}</td>
                   <td className="px-5 py-3 text-gray-600">{professor.telefone || '—'}</td>
                   <td className="px-5 py-3">

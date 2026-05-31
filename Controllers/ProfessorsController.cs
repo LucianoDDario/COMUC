@@ -100,6 +100,24 @@ namespace ComucAPI.Controllers
             return NoContent();
         }
 
+        // PUT: api/Professors/5/senha
+        [HttpPut("{id}/senha")]
+        public async Task<IActionResult> AlterarSenha(int id, [FromBody] AlterarSenhaDTO dto)
+        {
+            var professor = await _context.Professores.FindAsync(id);
+
+            if (professor == null)
+                return NotFound();
+
+            if (BCrypt.Net.BCrypt.Verify(dto.NovaSenha, professor.Senha))
+                return BadRequest(new { Mensagem = "A nova senha não pode ser igual à senha atual." });
+
+            professor.Senha = BCrypt.Net.BCrypt.HashPassword(dto.NovaSenha);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // DELETE: api/Professors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProfessor(int id)
