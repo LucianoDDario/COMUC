@@ -36,7 +36,7 @@ export default function Presenca() {
   const [salvando, setSalvando] = useState(false)
   const [mensagem, setMensagem] = useState<{ tipo: 'ok' | 'erro'; texto: string } | null>(null)
 
-  const { data: bandas = [], isLoading: carregandoBandas } = useQuery({
+  const { data: bandas = [], isLoading: carregandoBandas, isError: erroBandas } = useQuery({
     queryKey: ['bandas'],
     queryFn: fetchBandas,
   })
@@ -116,6 +116,8 @@ export default function Presenca() {
               <option value="">Selecione a banda</option>
               {carregandoBandas ? (
                 <option disabled>Carregando...</option>
+              ) : erroBandas ? (
+                <option disabled>Erro ao carregar bandas</option>
               ) : (
                 bandas.map(b => (
                   <option key={b.idBanda} value={b.idBanda}>

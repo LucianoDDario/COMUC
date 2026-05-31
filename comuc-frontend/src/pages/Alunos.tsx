@@ -42,7 +42,7 @@ export default function Alunos() {
 
   const anoAtual = new Date().getFullYear()
 
-  const { data: alunos = [], isLoading } = useQuery({
+  const { data: alunos = [], isLoading, isError } = useQuery({
     queryKey: ['alunos'],
     queryFn: fetchAlunos,
   })
@@ -180,6 +180,8 @@ export default function Alunos() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <p className="text-sm text-gray-500 p-5">Carregando alunos...</p>
+        ) : isError ? (
+          <p className="text-sm text-red-500 p-5">Erro ao carregar alunos. Verifique a conexão e tente novamente.</p>
         ) : alunosFiltrados.length === 0 ? (
           <p className="text-sm text-gray-500 p-5">
             {busca || bandasSelecionadas.length > 0 ? 'Nenhum resultado encontrado.' : 'Nenhum aluno cadastrado.'}

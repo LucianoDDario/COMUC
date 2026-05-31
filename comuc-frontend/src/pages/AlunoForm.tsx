@@ -57,7 +57,7 @@ export default function AlunoForm() {
     queryFn: fetchBandas,
   })
 
-  const { data: alunoExistente } = useQuery({
+  const { data: alunoExistente, isError: erroCarregarAluno } = useQuery({
     queryKey: ['aluno', alunoId],
     queryFn: () => fetchAluno(alunoId!),
     enabled: isEdit && alunoId !== null,
@@ -161,6 +161,14 @@ export default function AlunoForm() {
     } finally {
       setSalvando(false)
     }
+  }
+
+  if (isEdit && erroCarregarAluno) {
+    return (
+      <div className="max-w-2xl">
+        <p className="text-sm text-red-500">Erro ao carregar dados do aluno. Verifique a conexão e tente novamente.</p>
+      </div>
+    )
   }
 
   return (

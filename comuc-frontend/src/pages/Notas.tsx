@@ -52,7 +52,7 @@ export default function Notas() {
   const [editValues, setEditValues] = useState<Record<number, string>>({})
   const [erroEditar, setErroEditar] = useState('')
 
-  const { data: medias = [], isLoading } = useQuery<NotaMedia[]>({
+  const { data: medias = [], isLoading, isError } = useQuery<NotaMedia[]>({
     queryKey: ['notas-medias', mes, ano],
     queryFn: () => fetchMedias(mes, ano),
   })
@@ -145,6 +145,8 @@ export default function Notas() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <p className="text-sm text-gray-500 p-5">Carregando notas...</p>
+        ) : isError ? (
+          <p className="text-sm text-red-500 p-5">Erro ao carregar notas. Verifique a conexão e tente novamente.</p>
         ) : medias.length === 0 ? (
           <p className="text-sm text-gray-500 p-5">Nenhuma nota registrada para este período.</p>
         ) : (

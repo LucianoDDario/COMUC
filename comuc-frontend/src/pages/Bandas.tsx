@@ -54,7 +54,7 @@ export default function Bandas() {
   const [erroVincular, setErroVincular] = useState('')
   const [erroDelete, setErroDelete] = useState('')
 
-  const { data: bandas = [], isLoading } = useQuery<Banda[]>({
+  const { data: bandas = [], isLoading, isError } = useQuery<Banda[]>({
     queryKey: ['bandas'],
     queryFn: fetchBandas,
   })
@@ -139,6 +139,8 @@ export default function Bandas() {
 
       {isLoading ? (
         <p className="text-sm text-gray-500">Carregando bandas...</p>
+      ) : isError ? (
+        <p className="text-sm text-red-500">Erro ao carregar bandas. Verifique a conexão e tente novamente.</p>
       ) : bandas.length === 0 ? (
         <p className="text-sm text-gray-500">Nenhuma banda cadastrada.</p>
       ) : (

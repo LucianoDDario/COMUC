@@ -43,7 +43,7 @@ export default function ProfessorForm() {
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState('')
 
-  const { data: professorExistente } = useQuery({
+  const { data: professorExistente, isError: erroCarregarProfessor } = useQuery({
     queryKey: ['professor', professorId],
     queryFn: () => fetchProfessor(professorId!),
     enabled: isEdit && professorId !== null,
@@ -102,6 +102,14 @@ export default function ProfessorForm() {
     } finally {
       setSalvando(false)
     }
+  }
+
+  if (isEdit && erroCarregarProfessor) {
+    return (
+      <div className="max-w-2xl">
+        <p className="text-sm text-red-500">Erro ao carregar dados do professor. Verifique a conexão e tente novamente.</p>
+      </div>
+    )
   }
 
   return (

@@ -22,7 +22,7 @@ export default function Professores() {
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null)
   const [erroDelete, setErroDelete] = useState('')
 
-  const { data: professores = [], isLoading } = useQuery<Professor[]>({
+  const { data: professores = [], isLoading, isError } = useQuery<Professor[]>({
     queryKey: ['professores-list'],
     queryFn: fetchProfessores,
   })
@@ -53,6 +53,8 @@ export default function Professores() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <p className="text-sm text-gray-500 p-5">Carregando professores...</p>
+        ) : isError ? (
+          <p className="text-sm text-red-500 p-5">Erro ao carregar professores. Verifique a conexão e tente novamente.</p>
         ) : professores.length === 0 ? (
           <p className="text-sm text-gray-500 p-5">Nenhum professor cadastrado.</p>
         ) : (
