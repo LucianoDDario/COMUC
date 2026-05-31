@@ -23,6 +23,7 @@ namespace ComucAPI.Controllers
             _jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")!;
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {

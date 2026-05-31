@@ -163,6 +163,7 @@ export default function Presenca() {
                         type="checkbox"
                         checked={aluno.presente}
                         onChange={() => togglePresenca(aluno.idAluno)}
+                        aria-label={`Presença de ${aluno.nome}`}
                         className="w-4 h-4 cursor-pointer accent-gray-900"
                       />
                     </td>

@@ -95,10 +95,10 @@ export default function Layout() {
               <Home size={15} />
               Início
             </button>
-            <button className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors">
+            <span className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5">
               <User size={15} />
               {user?.nome ?? 'Perfil do Usuário'}
-            </button>
+            </span>
             <button
               onClick={handleLogout}
               className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"

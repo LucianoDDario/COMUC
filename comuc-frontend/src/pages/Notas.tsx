@@ -156,7 +156,7 @@ export default function Notas() {
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Nome do Aluno</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">{prof1}</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">{prof2}</th>
-                <th className="text-left px-5 py-3 font-medium text-gray-700">Média</th>
+                <th className="text-left px-5 py-3 font-medium text-gray-700">Média <span className="text-xs font-normal text-gray-400">(mín. 7)</span></th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Ações</th>
               </tr>
             </thead>
@@ -199,8 +199,10 @@ export default function Notas() {
                         nota2 ? nota2.nota.toFixed(1) : '—'
                       )}
                     </td>
-                    <td className="px-5 py-3 text-gray-600 font-medium">
-                      {row.media.toFixed(1)}
+                    <td className="px-5 py-3 font-medium">
+                      <span className={row.media >= 7 ? 'text-green-600' : 'text-red-500'}>
+                        {row.media.toFixed(1)}
+                      </span>
                     </td>
                     <td className="px-5 py-3">
                       {isEditing ? (

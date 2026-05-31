@@ -19,8 +19,13 @@ const STORAGE_KEY = 'comuc_user'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    return stored ? (JSON.parse(stored) as AuthUser) : null
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      return stored ? (JSON.parse(stored) as AuthUser) : null
+    } catch {
+      localStorage.removeItem(STORAGE_KEY)
+      return null
+    }
   })
 
   function login(userData: AuthUser) {

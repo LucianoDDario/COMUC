@@ -5,12 +5,16 @@ const api = axios.create({
 })
 
 api.interceptors.request.use(config => {
-  const stored = localStorage.getItem('comuc_user')
-  if (stored) {
-    const user = JSON.parse(stored)
-    if (user?.token) {
-      config.headers.Authorization = `Bearer ${user.token}`
+  try {
+    const stored = localStorage.getItem('comuc_user')
+    if (stored) {
+      const user = JSON.parse(stored)
+      if (user?.token) {
+        config.headers.Authorization = `Bearer ${user.token}`
+      }
     }
+  } catch {
+    localStorage.removeItem('comuc_user')
   }
   return config
 })

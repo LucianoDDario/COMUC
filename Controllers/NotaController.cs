@@ -180,9 +180,5 @@ namespace ComucAPI.Controllers
             return NoContent();
         }
 
-        private bool NotaExists(int id)
-        {
-            return _context.Notas.Any(e => e.IdNota == id);
-        }
     }
 }

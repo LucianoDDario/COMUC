@@ -25,23 +25,27 @@ namespace ComucAPI.Controllers
 
         // GET: api/Funcionario
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Funcionario>>> GetFuncionarios()
+        public async Task<ActionResult> GetFuncionarios()
         {
-            return await _context.Funcionarios.ToListAsync();
+            var funcionarios = await _context.Funcionarios
+                .Select(f => new { IdFuncionario = f.IdFuncionario, Nome = f.nome })
+                .ToListAsync();
+            return Ok(funcionarios);
         }
 
         // GET: api/Funcionario/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Funcionario>> GetFuncionario(int id)
+        public async Task<ActionResult> GetFuncionario(int id)
         {
-            var funcionario = await _context.Funcionarios.FindAsync(id);
+            var funcionario = await _context.Funcionarios
+                .Where(f => f.IdFuncionario == id)
+                .Select(f => new { IdFuncionario = f.IdFuncionario, Nome = f.nome })
+                .FirstOrDefaultAsync();
 
             if (funcionario == null)
-            {
                 return NotFound();
-            }
 
-            return funcionario;
+            return Ok(funcionario);
         }
 
         // PUT: api/Funcionario/5
