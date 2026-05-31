@@ -40,10 +40,10 @@ export default function Login() {
       })
       navigate('/presenca', {replace: true})
     } catch (error: any) {
-      if (!error.response) {
-        setErro('Erro de conexão com o servidor. Tente novamente.')
-      } else {
+      if (error.response?.status === 401) {
         setErro('Usuário ou senha inválidos.')
+      } else {
+        setErro('Erro de conexão com o servidor. Tente novamente.')
       }
     }
   }
