@@ -38,12 +38,17 @@ export default function Login() {
         nome: response.data.nome,
         tipoUsuario: response.data.tipoUsuario,
       })
-      navigate('/presenca', { replace: true })
-    } catch {
-      setErro('Usuário ou senha inválidos.')
+      navigate('/presenca', {replace: true})
+    } catch (error: any) {
+      console.error("ERRO COMPLETO:", error);
+      // Se for erro de rede/CORS ou 404, não vai ter 'response'
+      if (!error.response) {
+        setErro('Erro de conexão com o servidor. Verifique o CORS.');
+      } else {
+        setErro('Usuário ou senha inválidos.');
+      }
     }
   }
-
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl shadow-md w-full max-w-md p-8">

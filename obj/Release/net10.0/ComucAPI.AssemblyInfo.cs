@@ -11,10 +11,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("95d12326-81ba-4492-88d1-991bc7ed7a83")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("ComucAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7dcd886176dd62e2451b013c0df6de3b67a82bb7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6672964a6bdc2246bdc06cb55de26710d36c770a")]
 [assembly: System.Reflection.AssemblyProductAttribute("ComucAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ComucAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

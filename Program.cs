@@ -1,20 +1,28 @@
 using ComucAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using dotenv.net;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+DotEnv.Load();
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = Environment.GetEnvironmentVariable("SUPABASE_CONNECTION");
+
+
+
 
 builder.Services.AddDbContext<ComucDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("ComucConnection")));
+    options.UseNpgsql(connectionString!));
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontEnd", policy =>
     {
-        policy.WithOrigins("http://localhost:5173")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -34,7 +42,7 @@ app.UseSwaggerUI();
 
 if (app.Environment.IsDevelopment())
 {
-    
+
 }
 
 //app.UseHttpsRedirection();
@@ -42,3 +50,4 @@ app.UseCors("FrontEnd");
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+
