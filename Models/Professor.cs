@@ -20,5 +20,17 @@ namespace ComucAPI.Models
         [MaxLength(255)]
         [Column("senha")]
         public string Senha { get; set; }
+
+        [MaxLength(11)]
+        [Column("cpf")]
+        public string? CPF { get; set; }
+
+        [MaxLength(20)]
+        [Column("telefone")]
+        public string? Telefone { get; set; }
+
+        [MaxLength(255)]
+        [Column("endereco")]
+        public string? Endereco { get; set; }
     }
 }

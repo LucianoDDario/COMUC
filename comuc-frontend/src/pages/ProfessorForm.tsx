@@ -10,16 +10,20 @@ import api from '@/lib/api'
 const createSchema = z.object({
   nome: z.string().min(1, 'Nome obrigatório'),
   senha: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
+  cpf: z.string().max(11, 'CPF deve ter 11 dígitos').optional(),
+  telefone: z.string().max(20).optional(),
+  endereco: z.string().optional(),
 })
 
 const editSchema = z.object({
   nome: z.string().min(1, 'Nome obrigatório'),
   senha: z.string().optional(),
+  cpf: z.string().max(11, 'CPF deve ter 11 dígitos').optional(),
+  telefone: z.string().max(20).optional(),
+  endereco: z.string().optional(),
 })
 
-type ProfessorFormData = { nome: string; senha?: string }
-
-const MOCK_PROFESSOR = { idProfessor: 1, nome: 'Carlos Mendes' }
+type ProfessorFormData = { nome: string; senha?: string; cpf?: string; telefone?: string; endereco?: string }
 
 async function fetchProfessor(id: number) {
   const res = await api.get(`/Professors/${id}`)
@@ -39,8 +43,6 @@ export default function ProfessorForm() {
     queryKey: ['professor', professorId],
     queryFn: () => fetchProfessor(professorId!),
     enabled: isEdit && professorId !== null,
-    initialData: isEdit ? MOCK_PROFESSOR : undefined,
-    staleTime: Infinity,
   })
 
   const {
@@ -50,12 +52,17 @@ export default function ProfessorForm() {
     formState: { errors },
   } = useForm<ProfessorFormData>({
     resolver: zodResolver(isEdit ? editSchema : createSchema),
-    defaultValues: { nome: '', senha: '' },
+    defaultValues: { nome: '', senha: '', cpf: '', telefone: '', endereco: '' },
   })
 
   useEffect(() => {
     if (professorExistente) {
-      reset({ nome: professorExistente.nome ?? '' })
+      reset({
+        nome: professorExistente.nome ?? '',
+        cpf: professorExistente.cpf ?? '',
+        telefone: professorExistente.telefone ?? '',
+        endereco: professorExistente.endereco ?? '',
+      })
     }
   }, [professorExistente, reset])
 
@@ -64,9 +71,9 @@ export default function ProfessorForm() {
     setErro('')
     try {
       if (isEdit && professorId) {
-        await api.put(`/Professors/${professorId}`, { nome: data.nome })
+        await api.put(`/Professors/${professorId}`, { nome: data.nome, cpf: data.cpf, telefone: data.telefone, endereco: data.endereco })
       } else {
-        await api.post('/Professors', { nome: data.nome, senha: data.senha })
+        await api.post('/Professors', { nome: data.nome, senha: data.senha, cpf: data.cpf, telefone: data.telefone, endereco: data.endereco })
       }
       navigate('/professores')
     } catch {
@@ -119,7 +126,38 @@ export default function ProfessorForm() {
             </div>
           )}
 
-          {/* TODO: CPF, RG, Telefone, DataNascimento, Endereco — aguardando campos no backend */}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">CPF</label>
+            <input
+              type="text"
+              placeholder="12345678901"
+              maxLength={11}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
+              {...register('cpf')}
+            />
+            {errors.cpf && <span className="text-xs text-red-500">{errors.cpf.message}</span>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Telefone</label>
+            <input
+              type="text"
+              placeholder="(11) 98765-4321"
+              maxLength={20}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
+              {...register('telefone')}
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Endereço</label>
+            <textarea
+              placeholder="Rua, número, complemento, cidade, estado"
+              rows={3}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition resize-none"
+              {...register('endereco')}
+            />
+          </div>
 
           {erro && <p className="text-xs text-red-500">{erro}</p>}
 

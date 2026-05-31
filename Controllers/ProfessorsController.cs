@@ -29,6 +29,9 @@ namespace ComucAPI.Controllers
                 {
                     IdProfessor = p.IdProfessor,
                     Nome = p.Nome,
+                    CPF = p.CPF,
+                    Telefone = p.Telefone,
+                    Endereco = p.Endereco,
                 })
                 .ToListAsync();
 
@@ -41,7 +44,7 @@ namespace ComucAPI.Controllers
         {
             var professor = await _context.Professores
                 .Where(p => p.IdProfessor == id)
-                .Select(p => new { IdProfessor = p.IdProfessor, Nome = p.Nome })
+                .Select(p => new { IdProfessor = p.IdProfessor, Nome = p.Nome, CPF = p.CPF, Telefone = p.Telefone, Endereco = p.Endereco })
                 .FirstOrDefaultAsync();
 
             if (professor == null)
@@ -58,6 +61,9 @@ namespace ComucAPI.Controllers
             {
                 Nome = dto.Nome,
                 Senha = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
+                CPF = dto.CPF,
+                Telefone = dto.Telefone,
+                Endereco = dto.Endereco,
             };
 
             _context.Professores.Add(professor);
@@ -77,6 +83,9 @@ namespace ComucAPI.Controllers
                 return NotFound();
 
             professor.Nome = dto.Nome;
+            professor.CPF = dto.CPF;
+            professor.Telefone = dto.Telefone;
+            professor.Endereco = dto.Endereco;
 
             await _context.SaveChangesAsync();
 

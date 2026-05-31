@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import { AuthProvider } from '@/contexts/AuthContext'
+import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import Login from '@/pages/Login'
 import Layout from '@/components/Layout'
 import Presenca from '@/pages/Presenca'
@@ -11,10 +11,8 @@ import AlunoForm from '@/pages/AlunoForm'
 import ProfessorForm from '@/pages/ProfessorForm'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
-  // TODO: reativar proteção quando o backend estiver disponível
-  // const { user } = useAuth()
-  // return user ? <>{children}</> : <Navigate to="/login" replace />
-  return <>{children}</>
+  const { user } = useAuth()
+  return user ? <>{children}</> : <Navigate to="/login" replace />
 }
 
 function AppRoutes() {

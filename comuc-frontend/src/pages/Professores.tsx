@@ -7,13 +7,9 @@ import api from '@/lib/api'
 interface Professor {
   idProfessor: number
   nome: string
+  cpf?: string
+  telefone?: string
 }
-
-const MOCK_PROFESSORES: Professor[] = [
-  { idProfessor: 1, nome: 'Carlos Mendes' },
-  { idProfessor: 2, nome: 'Ana Paula Souza' },
-  { idProfessor: 3, nome: 'Roberto Lima' },
-]
 
 async function fetchProfessores(): Promise<Professor[]> {
   const res = await api.get('/Professors')
@@ -26,16 +22,14 @@ export default function Professores() {
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null)
 
   const { data: professores = [], isLoading } = useQuery<Professor[]>({
-    queryKey: ['professores'],
+    queryKey: ['professores-list'],
     queryFn: fetchProfessores,
-    initialData: MOCK_PROFESSORES,
-    staleTime: Infinity,
   })
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => api.delete(`/Professors/${id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['professores'] })
+      queryClient.invalidateQueries({ queryKey: ['professores-list'] })
       setConfirmDelete(null)
     },
   })
@@ -63,7 +57,8 @@ export default function Professores() {
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Nome</th>
-                {/* TODO: CPF, Telefone, DataNascimento — aguardando campos no backend */}
+                <th className="text-left px-5 py-3 font-medium text-gray-700">CPF</th>
+                <th className="text-left px-5 py-3 font-medium text-gray-700">Telefone</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Ações</th>
               </tr>
             </thead>
@@ -71,7 +66,8 @@ export default function Professores() {
               {professores.map(professor => (
                 <tr key={professor.idProfessor} className="hover:bg-gray-50">
                   <td className="px-5 py-3 font-medium text-gray-900">{professor.nome}</td>
-                  {/* TODO: CPF, Telefone, DataNascimento — aguardando campos no backend */}
+                  <td className="px-5 py-3 text-gray-600">{professor.cpf ?? '—'}</td>
+                  <td className="px-5 py-3 text-gray-600">{professor.telefone || '—'}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">
                       <button
