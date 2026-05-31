@@ -63,7 +63,7 @@ namespace ComucAPI.Controllers
         {
             var professor = new Professor
             {
-                Nome = dto.Nome,
+                Nome = dto.Nome.ToLower(),
                 Senha = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
                 CPF = dto.CPF,
                 RG = dto.RG,
@@ -88,7 +88,7 @@ namespace ComucAPI.Controllers
             if (professor == null)
                 return NotFound();
 
-            professor.Nome = dto.Nome;
+            professor.Nome = dto.Nome.ToLower();
             professor.CPF = dto.CPF;
             professor.RG = dto.RG;
             professor.Telefone = dto.Telefone;

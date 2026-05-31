@@ -26,9 +26,11 @@ namespace ComucAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
+            var nomeLower = request.Nome.ToLower();
+
             // 1. Tenta autenticar como Professor
             var professor = await _context.Professores
-                .FirstOrDefaultAsync(p => p.Nome == request.Nome);
+                .FirstOrDefaultAsync(p => p.Nome == nomeLower);
 
             if (professor != null && BCrypt.Net.BCrypt.Verify(request.Senha, professor.Senha))
             {
@@ -44,7 +46,7 @@ namespace ComucAPI.Controllers
 
             // 2. Tenta autenticar como Funcionário
             var funcionario = await _context.Funcionarios
-                .FirstOrDefaultAsync(f => f.nome == request.Nome);
+                .FirstOrDefaultAsync(f => f.nome == nomeLower);
 
             if (funcionario != null && BCrypt.Net.BCrypt.Verify(request.Senha, funcionario.senha))
             {
