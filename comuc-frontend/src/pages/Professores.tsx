@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { Plus, Pencil, Trash2 } from 'lucide-react'
 import api from '@/lib/api'
 
@@ -8,45 +9,27 @@ interface Professor {
   nome: string
 }
 
+const MOCK_PROFESSORES: Professor[] = [
+  { idProfessor: 1, nome: 'Carlos Mendes' },
+  { idProfessor: 2, nome: 'Ana Paula Souza' },
+  { idProfessor: 3, nome: 'Roberto Lima' },
+]
+
 async function fetchProfessores(): Promise<Professor[]> {
   const res = await api.get('/Professors')
   return res.data
 }
 
 export default function Professores() {
+  const navigate = useNavigate()
   const queryClient = useQueryClient()
-
-  const [modalAdicionar, setModalAdicionar] = useState(false)
-  const [modalEditar, setModalEditar] = useState<Professor | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null)
-
-  const [nome, setNome] = useState('')
-  const [senha, setSenha] = useState('')
-  const [nomeEditar, setNomeEditar] = useState('')
 
   const { data: professores = [], isLoading } = useQuery<Professor[]>({
     queryKey: ['professores'],
     queryFn: fetchProfessores,
-  })
-
-  const criarMutation = useMutation({
-    mutationFn: () => api.post('/Professors', { nome, senha }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['professores'] })
-      setModalAdicionar(false)
-      setNome('')
-      setSenha('')
-    },
-  })
-
-  const editarMutation = useMutation({
-    mutationFn: (professor: Professor) =>
-      api.put(`/Professors/${professor.idProfessor}`, { nome: nomeEditar }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['professores'] })
-      setModalEditar(null)
-      setNomeEditar('')
-    },
+    initialData: MOCK_PROFESSORES,
+    staleTime: Infinity,
   })
 
   const deleteMutation = useMutation({
@@ -57,17 +40,12 @@ export default function Professores() {
     },
   })
 
-  function abrirEditar(professor: Professor) {
-    setModalEditar(professor)
-    setNomeEditar(professor.nome)
-  }
-
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Gestão de Professores</h1>
         <button
-          onClick={() => setModalAdicionar(true)}
+          onClick={() => navigate('/professores/novo')}
           className="flex items-center gap-1.5 text-sm font-semibold bg-gray-900 text-white px-3 py-1.5 rounded-lg hover:bg-gray-700 transition-colors"
         >
           <Plus size={15} />
@@ -97,7 +75,7 @@ export default function Professores() {
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => abrirEditar(professor)}
+                        onClick={() => navigate(`/professores/${professor.idProfessor}/editar`)}
                         className="p-1.5 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
                         title="Editar"
                       >
@@ -119,90 +97,6 @@ export default function Professores() {
         )}
       </div>
 
-      {/* Modal Adicionar Professor */}
-      {modalAdicionar && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-sm mx-4">
-            <h2 className="text-base font-semibold text-gray-900 mb-4">Adicionar Novo Professor</h2>
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-                <input
-                  type="text"
-                  value={nome}
-                  onChange={e => setNome(e.target.value)}
-                  placeholder="Nome completo"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
-                />
-              </div>
-              {/* TODO: CPF, RG, Telefone, DataNascimento, Endereco — aguardando campos no backend */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Senha</label>
-                <input
-                  type="password"
-                  value={senha}
-                  onChange={e => setSenha(e.target.value)}
-                  placeholder="Senha de acesso"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
-                />
-              </div>
-            </div>
-            <div className="flex justify-end gap-2 mt-5">
-              <button
-                onClick={() => { setModalAdicionar(false); setNome(''); setSenha('') }}
-                className="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => criarMutation.mutate()}
-                disabled={!nome.trim() || !senha.trim() || criarMutation.isPending}
-                className="text-sm bg-gray-900 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-4 py-2 rounded-lg transition-colors"
-              >
-                {criarMutation.isPending ? 'Adicionando...' : 'Adicionar'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal Editar Professor */}
-      {modalEditar !== null && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-sm mx-4">
-            <h2 className="text-base font-semibold text-gray-900 mb-4">Editar Professor</h2>
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-                <input
-                  type="text"
-                  value={nomeEditar}
-                  onChange={e => setNomeEditar(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
-                />
-              </div>
-              {/* TODO: CPF, RG, Telefone, DataNascimento, Endereco — aguardando campos no backend */}
-            </div>
-            <div className="flex justify-end gap-2 mt-5">
-              <button
-                onClick={() => { setModalEditar(null); setNomeEditar('') }}
-                className="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={() => editarMutation.mutate(modalEditar)}
-                disabled={!nomeEditar.trim() || editarMutation.isPending}
-                className="text-sm bg-gray-900 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-4 py-2 rounded-lg transition-colors"
-              >
-                {editarMutation.isPending ? 'Salvando...' : 'Salvar'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Confirmação de exclusão */}
       {confirmDelete !== null && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-sm mx-4">

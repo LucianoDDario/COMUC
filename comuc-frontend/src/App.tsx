@@ -8,6 +8,7 @@ import Alunos from '@/pages/Alunos'
 import Professores from '@/pages/Professores'
 import Bandas from '@/pages/Bandas'
 import AlunoForm from '@/pages/AlunoForm'
+import ProfessorForm from '@/pages/ProfessorForm'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   // TODO: reativar proteção quando o backend estiver disponível
@@ -33,6 +34,8 @@ function AppRoutes() {
         <Route path="/alunos/novo" element={<AlunoForm />} />
         <Route path="/alunos/:id/editar" element={<AlunoForm />} />
         <Route path="/professores" element={<Professores />} />
+        <Route path="/professores/novo" element={<ProfessorForm />} />
+        <Route path="/professores/:id/editar" element={<ProfessorForm />} />
         <Route path="/bandas" element={<Bandas />} />
         <Route path="/" element={<Navigate to="/presenca" replace />} />
       </Route>
