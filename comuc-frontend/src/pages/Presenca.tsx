@@ -76,8 +76,12 @@ export default function Presenca() {
         Alunos: alunos.map(a => ({ IdAluno: a.idAluno, Presente: a.presente })),
       })
       setMensagem({ tipo: 'ok', texto: 'Presença salva com sucesso!' })
-    } catch {
-      setMensagem({ tipo: 'erro', texto: 'Erro ao salvar presença. Tente novamente.' })
+    } catch (error: any) {
+      if (error.response?.status === 403) {
+        setMensagem({ tipo: 'erro', texto: 'Você não tem permissão para realizar esta ação.' })
+      } else {
+        setMensagem({ tipo: 'erro', texto: 'Erro ao salvar presença. Tente novamente.' })
+      }
     } finally {
       setSalvando(false)
     }
@@ -175,13 +179,15 @@ export default function Presenca() {
               ) : (
                 <span />
               )}
-              <button
-                onClick={salvar}
-                disabled={salvando}
-                className="bg-gray-900 hover:bg-gray-700 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2 rounded-lg transition cursor-pointer"
-              >
-                {salvando ? 'Salvando...' : 'Salvar Presença da Aula'}
-              </button>
+              {user?.tipoUsuario === 'Professor' && (
+                <button
+                  onClick={salvar}
+                  disabled={salvando}
+                  className="bg-gray-900 hover:bg-gray-700 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2 rounded-lg transition cursor-pointer"
+                >
+                  {salvando ? 'Salvando...' : 'Salvar Presença da Aula'}
+                </button>
+              )}
             </div>
           )}
         </div>
