@@ -1,11 +1,10 @@
-﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ComucAPI.Data;
+using ComucAPI.DTOs;
 using ComucAPI.Models;
 
 namespace ComucAPI.Controllers
@@ -23,68 +22,65 @@ namespace ComucAPI.Controllers
 
         // GET: api/Professors
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Professor>>> GetProfessores()
+        public async Task<ActionResult> GetProfessores()
         {
-            return await _context.Professores.ToListAsync();
+            var professores = await _context.Professores
+                .Select(p => new
+                {
+                    IdProfessor = p.IdProfessor,
+                    Nome = p.Nome,
+                })
+                .ToListAsync();
+
+            return Ok(professores);
         }
 
         // GET: api/Professors/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Professor>> GetProfessor(int id)
+        public async Task<ActionResult> GetProfessor(int id)
         {
-            var professor = await _context.Professores.FindAsync(id);
+            var professor = await _context.Professores
+                .Where(p => p.IdProfessor == id)
+                .Select(p => new { IdProfessor = p.IdProfessor, Nome = p.Nome })
+                .FirstOrDefaultAsync();
 
             if (professor == null)
-            {
                 return NotFound();
-            }
 
-            return professor;
-        }
-
-        // PUT: api/Professors/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProfessor(int id, Professor professor)
-        {
-            if (id != professor.IdProfessor)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(professor).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProfessorExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return Ok(professor);
         }
 
         // POST: api/Professors
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Professor>> PostProfessor(Professor professor)
+        public async Task<ActionResult> PostProfessor([FromBody] ProfessorCreateDTO dto)
         {
-            // Criptografa a senha antes de salvar
-            professor.Senha = BCrypt.Net.BCrypt.HashPassword(professor.Senha);
+            var professor = new Professor
+            {
+                Nome = dto.Nome,
+                Senha = BCrypt.Net.BCrypt.HashPassword(dto.Senha),
+            };
 
             _context.Professores.Add(professor);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProfessor", new { id = professor.IdProfessor }, professor);
+            return CreatedAtAction(nameof(GetProfessor), new { id = professor.IdProfessor },
+                new { professor.IdProfessor, professor.Nome });
+        }
+
+        // PUT: api/Professors/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProfessor(int id, [FromBody] ProfessorEditDTO dto)
+        {
+            var professor = await _context.Professores.FindAsync(id);
+
+            if (professor == null)
+                return NotFound();
+
+            professor.Nome = dto.Nome;
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
         }
 
         // DELETE: api/Professors/5
@@ -92,20 +88,14 @@ namespace ComucAPI.Controllers
         public async Task<IActionResult> DeleteProfessor(int id)
         {
             var professor = await _context.Professores.FindAsync(id);
+
             if (professor == null)
-            {
                 return NotFound();
-            }
 
             _context.Professores.Remove(professor);
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool ProfessorExists(int id)
-        {
-            return _context.Professores.Any(e => e.IdProfessor == id);
         }
     }
 }

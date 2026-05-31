@@ -6,7 +6,6 @@ import api from '@/lib/api'
 interface Professor {
   idProfessor: number
   nome: string
-  senha: string
 }
 
 async function fetchProfessores(): Promise<Professor[]> {
@@ -42,11 +41,7 @@ export default function Professores() {
 
   const editarMutation = useMutation({
     mutationFn: (professor: Professor) =>
-      api.put(`/Professors/${professor.idProfessor}`, {
-        idProfessor: professor.idProfessor,
-        nome: nomeEditar,
-        senha: professor.senha,
-      }),
+      api.put(`/Professors/${professor.idProfessor}`, { nome: nomeEditar }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['professores'] })
       setModalEditar(null)
