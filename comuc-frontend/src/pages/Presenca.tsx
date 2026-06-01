@@ -113,14 +113,14 @@ export default function Presenca() {
               }}
               className={`border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition ${bandaId === null ? 'text-gray-400' : 'text-gray-900'}`}
             >
-              <option value="">Selecione a banda</option>
+              <option value="" style={{ color: '#9CA3AF' }}>Selecione a banda</option>
               {carregandoBandas ? (
-                <option disabled>Carregando...</option>
+                <option disabled style={{ color: '#111827' }}>Carregando...</option>
               ) : erroBandas ? (
-                <option disabled>Erro ao carregar bandas</option>
+                <option disabled style={{ color: '#111827' }}>Erro ao carregar bandas</option>
               ) : (
                 bandas.map(b => (
-                  <option key={b.idBanda} value={b.idBanda}>
+                  <option key={b.idBanda} value={b.idBanda} style={{ color: '#111827' }}>
                     {b.nome}
                   </option>
                 ))
