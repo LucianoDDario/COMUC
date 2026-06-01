@@ -27,6 +27,7 @@ namespace ComucAPI.Controllers
         public async Task<ActionResult> GetProfessores()
         {
             var professores = await _context.Professores
+                .Where(p => p.Nome != "admin")
                 .Select(p => new
                 {
                     IdProfessor = p.IdProfessor,
