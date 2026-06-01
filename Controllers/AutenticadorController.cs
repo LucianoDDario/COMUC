@@ -1,6 +1,7 @@
 using BCrypt.Net;
 using ComucAPI.Data;
 using ComucAPI.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
