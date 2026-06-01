@@ -111,7 +111,7 @@ export default function Presenca() {
                 setAlunos([])
                 setMensagem(null)
               }}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-400 outline-none focus:ring-2 focus:ring-gray-900 transition"
+              className={`border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition ${bandaId === null ? 'text-gray-400' : 'text-gray-900'}`}
             >
               <option value="">Selecione a banda</option>
               {carregandoBandas ? (
