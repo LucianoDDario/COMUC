@@ -34,7 +34,13 @@ export default function Professores() {
       setConfirmDelete(null)
       setErroDelete('')
     },
-    onError: () => setErroDelete('Erro ao excluir professor. Tente novamente.'),
+    onError: (error: any) => {
+      if (error.response?.status === 400) {
+        setErroDelete('O usuário admin não pode ser excluído.')
+      } else {
+        setErroDelete('Erro ao excluir professor. Tente novamente.')
+      }
+    },
   })
 
   return (

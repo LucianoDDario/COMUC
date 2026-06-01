@@ -127,6 +127,9 @@ namespace ComucAPI.Controllers
             if (professor == null)
                 return NotFound();
 
+            if (professor.Nome == "admin")
+                return BadRequest(new { Mensagem = "O usuário admin não pode ser excluído." });
+
             _context.Professores.Remove(professor);
             await _context.SaveChangesAsync();
 
