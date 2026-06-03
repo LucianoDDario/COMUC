@@ -48,28 +48,29 @@ namespace ComucAPI.Controllers
         [HttpGet("hierarquia")]
         public async Task<ActionResult> GetBandasHierarquia()
         {
-            var bandas = await _context.Bandas
+            var bandasRaw = await _context.Bandas
                 .Where(b => b.banda_pai_id == null)
                 .Include(b => b.SubTurmas).ThenInclude(s => s.Alunos)
                 .Include(b => b.Alunos)
                 .Include(b => b.Professor)
-                .Select(b => new
-                {
-                    IdBanda = b.IdBanda,
-                    Nome = b.Nome,
-                    IdProfessor = b.id_professor,
-                    NomeProfessor = b.Professor != null ? b.Professor.Nome : "Sem professor",
-                    TotalAlunos = b.Alunos.Count + b.SubTurmas.Sum(s => s.Alunos.Count),
-                    SubTurmas = (b.SubTurmas ?? new List<Banda>()).Select(s => new
-                    {
-                        s.IdBanda,
-                        s.Nome,
-                        TotalAlunos = s.Alunos.Count
-                    }).ToList()
-                })
                 .ToListAsync();
 
-            return Ok(bandas);
+            var result = bandasRaw.Select(b => new
+            {
+                IdBanda = b.IdBanda,
+                Nome = b.Nome,
+                IdProfessor = b.id_professor,
+                NomeProfessor = b.Professor?.Nome ?? "Sem professor",
+                TotalAlunos = b.Alunos.Count + (b.SubTurmas ?? new List<Banda>()).Sum(s => s.Alunos.Count),
+                SubTurmas = (b.SubTurmas ?? new List<Banda>()).Select(s => new
+                {
+                    s.IdBanda,
+                    s.Nome,
+                    TotalAlunos = s.Alunos.Count
+                }).ToList()
+            });
+
+            return Ok(result);
         }
 
         // GET: api/Banda/5
