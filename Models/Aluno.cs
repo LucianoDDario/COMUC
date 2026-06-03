@@ -48,6 +48,10 @@ namespace ComucAPI.Models
         [Column("nome_da_mae")]
         public string NomeMae { get; set; }
 
+        [MaxLength(50)]
+        [Column("documento_responsavel")]
+        public string? DocumentoResponsavel { get; set; }
+
         [Required]
         [Column("bolsista")]
         public bool Bolsista { get; set; }

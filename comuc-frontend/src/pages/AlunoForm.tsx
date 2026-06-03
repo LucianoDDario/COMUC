@@ -12,25 +12,64 @@ interface Banda {
   nome: string
 }
 
-const alunoSchema = z.object({
+function isMenorDeIdade(dataNascimento: string): boolean {
+  if (!dataNascimento) return false
+  const hoje = new Date()
+  const nascimento = new Date(dataNascimento + 'T00:00:00')
+  let idade = hoje.getFullYear() - nascimento.getFullYear()
+  const m = hoje.getMonth() - nascimento.getMonth()
+  if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--
+  return idade < 18
+}
+
+const baseSchema = z.object({
   nome: z.string().min(1, 'Nome obrigatório'),
-  dataNascimento: z.string().min(1, 'Data de nascimento obrigatória'),
-  telefone: z.string().min(1, 'Telefone obrigatório').max(11, 'Telefone deve ter no máximo 11 dígitos'),
+  dataNascimento: z.string()
+    .min(1, 'Data de nascimento obrigatória')
+    .refine(d => new Date(d + 'T00:00:00') <= new Date(), 'Data de nascimento não pode ser no futuro')
+    .refine(d => new Date(d + 'T00:00:00').getFullYear() <= 9999, 'Ano inválido'),
+  telefone: z.string()
+    .min(10, 'Telefone deve ter no mínimo 10 dígitos')
+    .max(11, 'Telefone deve ter no máximo 11 dígitos')
+    .regex(/^\d+$/, 'Telefone deve conter apenas números'),
   cpf: z.string().min(11, 'CPF deve ter 11 dígitos').max(11, 'CPF deve ter 11 dígitos'),
-  rg: z.string().max(9, 'RG deve ter no máximo 9 caracteres').optional(),
+  rg: z.string()
+    .min(7, 'RG deve ter no mínimo 7 dígitos')
+    .max(9, 'RG deve ter no máximo 9 dígitos')
+    .regex(/^\d+$/, 'RG deve conter apenas números'),
   endereco: z.string().min(1, 'Endereço obrigatório'),
   nomePai: z.string().optional(),
   nomeMae: z.string().optional(),
+  documentoResponsavel: z.string().max(50, 'Documento deve ter no máximo 50 caracteres').optional(),
   bolsista: z.enum(['sim', 'nao']),
-  dataInicio: z.string().optional(),
+  dataInicio: z.string().min(1, 'Data de início obrigatória'),
   possuiInstrumento: z.enum(['sim', 'nao']),
-  tamanhoVestimenta: z.string().optional(),
+  tamanhoVestimenta: z.string().min(1, 'Tamanho da vestimenta obrigatório'),
   idBandas: z.array(z.number()),
 })
 
-type AlunoFormData = z.infer<typeof alunoSchema>
+const menorRefine = (data: z.infer<typeof baseSchema>, ctx: z.RefinementCtx) => {
+  if (isMenorDeIdade(data.dataNascimento)) {
+    if (!data.nomePai?.trim())
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Nome do pai obrigatório para menores de idade', path: ['nomePai'] })
+    if (!data.nomeMae?.trim())
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Nome da mãe obrigatório para menores de idade', path: ['nomeMae'] })
+    if (!data.documentoResponsavel?.trim())
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Documento do responsável obrigatório para menores de idade', path: ['documentoResponsavel'] })
+  }
+}
 
-const ETAPA_1_FIELDS: (keyof AlunoFormData)[] = ['nome', 'dataNascimento', 'telefone', 'cpf', 'endereco']
+const createSchema = baseSchema.superRefine((data, ctx) => {
+  menorRefine(data, ctx)
+  if (data.idBandas.length === 0)
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione ao menos uma banda', path: ['idBandas'] })
+})
+
+const editSchema = baseSchema.superRefine(menorRefine)
+
+type AlunoFormData = z.infer<typeof baseSchema>
+
+const ETAPA_1_FIELDS: (keyof AlunoFormData)[] = ['nome', 'dataNascimento', 'telefone', 'cpf', 'rg', 'endereco']
 
 async function fetchBandas(): Promise<Banda[]> {
   const res = await api.get('/Banda')
@@ -72,7 +111,7 @@ export default function AlunoForm() {
     reset,
     formState: { errors },
   } = useForm<AlunoFormData>({
-    resolver: zodResolver(alunoSchema),
+    resolver: zodResolver(isEdit ? editSchema : createSchema),
     defaultValues: {
       bolsista: 'nao',
       possuiInstrumento: 'nao',
@@ -91,6 +130,7 @@ export default function AlunoForm() {
         endereco: alunoExistente.endereco ?? '',
         nomePai: alunoExistente.nomePai ?? '',
         nomeMae: alunoExistente.nomeMae ?? '',
+        documentoResponsavel: alunoExistente.documentoResponsavel ?? '',
         bolsista: alunoExistente.bolsista ? 'sim' : 'nao',
         dataInicio: alunoExistente.dataInicio?.split('T')[0] ?? '',
         possuiInstrumento: alunoExistente.possuiInstrumento ? 'sim' : 'nao',
@@ -101,6 +141,8 @@ export default function AlunoForm() {
   }, [alunoExistente, reset])
 
   const idBandasSelecionadas = watch('idBandas') ?? []
+  const dataNascimentoWatch = watch('dataNascimento')
+  const eMenor = isMenorDeIdade(dataNascimentoWatch)
 
   function toggleBanda(idBanda: number) {
     const atual = idBandasSelecionadas
@@ -131,6 +173,7 @@ export default function AlunoForm() {
           endereco: data.endereco,
           nomePai: data.nomePai ?? '',
           nomeMae: data.nomeMae ?? '',
+          documentoResponsavel: data.documentoResponsavel ?? '',
           bolsista: data.bolsista === 'sim',
           dataInicio: data.dataInicio ? new Date(data.dataInicio + 'T00:00:00Z').toISOString() : null,
           motivoSaida: '',
@@ -142,11 +185,12 @@ export default function AlunoForm() {
           Nome: data.nome,
           DataNascimento: new Date(data.dataNascimento + 'T00:00:00Z').toISOString(),
           CPF: data.cpf,
-          rg: data.rg ?? '',
+          rg: data.rg,
           Telefone: data.telefone,
           Endereco: data.endereco,
           NomePai: data.nomePai ?? '',
           NomeMae: data.nomeMae ?? '',
+          DocumentoResponsavel: data.documentoResponsavel ?? '',
           Bolsista: data.bolsista === 'sim',
           DataInicio: data.dataInicio ? new Date(data.dataInicio + 'T00:00:00Z').toISOString() : null,
           MotivoSaida: '',
@@ -217,6 +261,7 @@ export default function AlunoForm() {
               <label className="text-sm font-medium text-gray-700">Data de Nascimento</label>
               <input
                 type="date"
+                max="9999-12-31"
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
                 {...register('dataNascimento')}
               />
@@ -227,7 +272,7 @@ export default function AlunoForm() {
               <label className="text-sm font-medium text-gray-700">Telefone</label>
               <input
                 type="text"
-                placeholder="(11) 98765-4321"
+                placeholder="11987654321"
                 maxLength={11}
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
                 {...register('telefone')}
@@ -239,7 +284,7 @@ export default function AlunoForm() {
               <label className="text-sm font-medium text-gray-700">CPF</label>
               <input
                 type="text"
-                placeholder="123.456.789-00"
+                placeholder="12345678900"
                 maxLength={11}
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
                 {...register('cpf')}
@@ -251,11 +296,12 @@ export default function AlunoForm() {
               <label className="text-sm font-medium text-gray-700">RG</label>
               <input
                 type="text"
-                placeholder="12.345.678-9"
+                placeholder="123456789"
                 maxLength={9}
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
                 {...register('rg')}
               />
+              {errors.rg && <span className="text-xs text-red-500">{errors.rg.message}</span>}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -286,23 +332,51 @@ export default function AlunoForm() {
             <h2 className="text-base font-semibold text-gray-900">Informações do Aluno</h2>
 
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Nome do Pai</label>
+              <label className="text-sm font-medium text-gray-700">
+                Nome do Pai
+                {eMenor && <span className="ml-1 text-red-500">*</span>}
+              </label>
               <input
                 type="text"
                 placeholder="Digite o nome do pai"
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
                 {...register('nomePai')}
               />
+              {errors.nomePai && <span className="text-xs text-red-500">{errors.nomePai.message}</span>}
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-medium text-gray-700">Nome da Mãe</label>
+              <label className="text-sm font-medium text-gray-700">
+                Nome da Mãe
+                {eMenor && <span className="ml-1 text-red-500">*</span>}
+              </label>
               <input
                 type="text"
                 placeholder="Digite o nome da mãe"
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
                 {...register('nomeMae')}
               />
+              {errors.nomeMae && <span className="text-xs text-red-500">{errors.nomeMae.message}</span>}
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-sm font-medium text-gray-700">
+                Documento do Responsável
+                {eMenor
+                  ? <span className="ml-1 text-red-500">*</span>
+                  : <span className="ml-1 text-xs font-normal text-gray-400">(obrigatório para menores de idade)</span>
+                }
+              </label>
+              <input
+                type="text"
+                placeholder="CPF ou RG do responsável"
+                maxLength={50}
+                className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
+                {...register('documentoResponsavel')}
+              />
+              {errors.documentoResponsavel && (
+                <span className="text-xs text-red-500">{errors.documentoResponsavel.message}</span>
+              )}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -323,9 +397,11 @@ export default function AlunoForm() {
               <label className="text-sm font-medium text-gray-700">Data de Início</label>
               <input
                 type="date"
+                max="9999-12-31"
                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
                 {...register('dataInicio')}
               />
+              {errors.dataInicio && <span className="text-xs text-red-500">{errors.dataInicio.message}</span>}
             </div>
 
             <div className="flex flex-col gap-1">
@@ -356,6 +432,7 @@ export default function AlunoForm() {
                 <option value="GG">GG</option>
                 <option value="XGG">XGG</option>
               </select>
+              {errors.tamanhoVestimenta && <span className="text-xs text-red-500">{errors.tamanhoVestimenta.message}</span>}
             </div>
 
             {!isEdit && bandas.length > 0 && (
@@ -380,6 +457,7 @@ export default function AlunoForm() {
                     )
                   })}
                 </div>
+                {errors.idBandas && <span className="text-xs text-red-500">{errors.idBandas.message}</span>}
               </div>
             )}
 

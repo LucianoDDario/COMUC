@@ -107,6 +107,7 @@ namespace ComucAPI.Controllers
                 Endereco = dto.Endereco,
                 NomePai = dto.NomePai,
                 NomeMae = dto.NomeMae,
+                DocumentoResponsavel = dto.DocumentoResponsavel,
                 Bolsista = dto.Bolsista,
                 DataInicio = dto.DataInicio,
                 MotivoSaida = dto.MotivoSaida,

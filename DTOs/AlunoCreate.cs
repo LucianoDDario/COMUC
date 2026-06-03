@@ -13,6 +13,7 @@ namespace ComucAPI.DTOs
         public string Endereco { get; set; }
         public string NomePai { get; set; }
         public string NomeMae { get; set; }
+        public string? DocumentoResponsavel { get; set; }
         public bool Bolsista { get; set; }
         public DateTime? DataInicio { get; set; }
         public string MotivoSaida { get; set; }
