@@ -88,32 +88,18 @@ namespace ComucAPI.Controllers
         }
 
         // PUT: api/Banda/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBanda(int id, Banda banda)
+        public async Task<IActionResult> PutBanda(int id, [FromBody] BandaCreateDTO dto)
         {
-            if (id != banda.IdBanda)
-            {
-                return BadRequest();
-            }
+            var banda = await _context.Bandas.FindAsync(id);
 
-            _context.Entry(banda).State = EntityState.Modified;
+            if (banda == null)
+                return NotFound();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BandaExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            banda.Nome = dto.Nome;
+            banda.id_professor = dto.IdProfessor;
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

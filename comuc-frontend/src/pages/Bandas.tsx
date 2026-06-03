@@ -57,6 +57,7 @@ export default function Bandas() {
   const [idProfessor, setIdProfessor] = useState('')
   const [temTurnos, setTemTurnos] = useState(false)
   const [nomeEditar, setNomeEditar] = useState('')
+  const [idProfessorEditar, setIdProfessorEditar] = useState('')
   const [idAlunoVincular, setIdAlunoVincular] = useState('')
   const [erroCriar, setErroCriar] = useState('')
   const [erroEditar, setErroEditar] = useState('')
@@ -93,15 +94,12 @@ export default function Bandas() {
 
   const editarMutation = useMutation({
     mutationFn: (banda: Banda) =>
-      api.put(`/Banda/${banda.idBanda}`, {
-        idBanda: banda.idBanda,
-        nome: nomeEditar,
-        id_professor: banda.idProfessor,
-      }),
+      api.put(`/Banda/${banda.idBanda}`, { nome: nomeEditar, idProfessor: Number(idProfessorEditar) }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bandas'] })
       setModalEditar(null)
       setNomeEditar('')
+      setIdProfessorEditar('')
       setErroEditar('')
     },
     onError: () => setErroEditar('Erro ao salvar banda. Tente novamente.'),
@@ -135,6 +133,7 @@ export default function Bandas() {
   function abrirEditar(banda: Banda) {
     setModalEditar(banda)
     setNomeEditar(banda.nome)
+    setIdProfessorEditar(String(banda.idProfessor))
   }
 
   return (
@@ -347,26 +346,41 @@ export default function Bandas() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-sm mx-4">
             <h2 className="text-base font-semibold text-gray-900 mb-4">Editar Banda</h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nome da Banda</label>
-              <input
-                type="text"
-                value={nomeEditar}
-                onChange={e => setNomeEditar(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
-              />
+            <div className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Nome da Banda</label>
+                <input
+                  type="text"
+                  value={nomeEditar}
+                  onChange={e => setNomeEditar(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Professor Responsável</label>
+                <select
+                  value={idProfessorEditar}
+                  onChange={e => setIdProfessorEditar(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition bg-white"
+                >
+                  <option value="">Selecionar professor...</option>
+                  {professores.map(p => (
+                    <option key={p.idProfessor} value={p.idProfessor}>{p.nome}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             {erroEditar && <p className="text-xs text-red-500 mt-3">{erroEditar}</p>}
             <div className="flex justify-end gap-2 mt-5">
               <button
-                onClick={() => { setModalEditar(null); setNomeEditar(''); setErroEditar('') }}
+                onClick={() => { setModalEditar(null); setNomeEditar(''); setIdProfessorEditar(''); setErroEditar('') }}
                 className="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={() => editarMutation.mutate(modalEditar)}
-                disabled={!nomeEditar.trim() || editarMutation.isPending}
+                disabled={!nomeEditar.trim() || !idProfessorEditar || editarMutation.isPending}
                 className="text-sm bg-gray-900 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-4 py-2 rounded-lg transition-colors"
               >
                 {editarMutation.isPending ? 'Salvando...' : 'Salvar'}

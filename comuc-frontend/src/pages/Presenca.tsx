@@ -120,18 +120,27 @@ export default function Presenca() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          .area-impressao, .area-impressao * { visibility: visible; }
+          .area-impressao { position: absolute; left: 0; top: 0; width: 100%; }
+          .no-print { display: none !important; }
+        }
+      `}</style>
+
+      <div className="flex items-center justify-between mb-6 no-print">
         <h1 className="text-2xl font-bold text-gray-900">Lançamento de Presença</h1>
         <button
           onClick={() => window.print()}
           className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
         >
           <Printer size={15} />
-          Imprimir
+          Gerar Relatório
         </button>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4">
+      <div className="bg-white rounded-xl border border-gray-200 p-5 mb-4 no-print">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-gray-700">Banda</label>
@@ -176,6 +185,10 @@ export default function Presenca() {
       </div>
 
       {bandaId && (
+        <div className="area-impressao">
+          <p className="hidden print:block text-base font-semibold text-gray-900 mb-3">
+            {opcoesSelect.find(b => b.idBanda === bandaId)?.nome ?? ''}{data ? ` — ${new Date(data + 'T00:00:00').toLocaleDateString('pt-BR')}` : ''}
+          </p>
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           {carregandoAlunos ? (
             <p className="text-sm text-gray-500 p-5">Carregando alunos...</p>
@@ -183,7 +196,7 @@ export default function Presenca() {
             <p className="text-sm text-gray-500 p-5">Nenhum aluno encontrado nesta banda.</p>
           ) : (
             <>
-              <div className="flex items-center justify-end px-5 py-3 border-b border-gray-100">
+              <div className="flex items-center justify-end px-5 py-3 border-b border-gray-100 no-print">
                 <label className="flex items-center gap-2 cursor-pointer text-sm text-gray-600">
                   <span>Selecionar Todos</span>
                   <input
@@ -224,7 +237,7 @@ export default function Presenca() {
           )}
 
           {alunos.length > 0 && (
-            <div className="flex items-center justify-between px-5 py-4 border-t border-gray-200">
+            <div className="flex items-center justify-between px-5 py-4 border-t border-gray-200 no-print">
               {mensagem ? (
                 <span className={`text-sm ${mensagem.tipo === 'ok' ? 'text-green-600' : 'text-red-500'}`}>
                   {mensagem.texto}
@@ -243,6 +256,7 @@ export default function Presenca() {
               )}
             </div>
           )}
+        </div>
         </div>
       )}
     </div>
