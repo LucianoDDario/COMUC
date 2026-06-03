@@ -6,7 +6,6 @@ namespace ComucAPI.DTOs
     public class NotaLancamentoDTO
     {
         public DateTime Mes { get; set; }
-        public string Musica { get; set; }
         public List<AlunoNotaItemDTO> Alunos { get; set; }
     }
 
@@ -14,5 +13,7 @@ namespace ComucAPI.DTOs
     {
         public int IdAluno { get; set; }
         public decimal ValorNota { get; set; }
+        public string Musica { get; set; }
+        public string? Descricao { get; set; }
     }
 }

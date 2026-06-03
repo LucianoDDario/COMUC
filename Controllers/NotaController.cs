@@ -116,16 +116,16 @@ namespace ComucAPI.Controllers
             return Ok(new { Mensagem = "Nota lançada com sucesso!" });
         }
 
-        // POST: api/Nota/lancamento-lote — apenas Professor pode lançar notas
+        // POST: api/Nota/lancamento-lote
         [Authorize(Roles = "Professor")]
         [HttpPost("lancamento-lote")]
         public async Task<ActionResult> LancamentoLote([FromBody] NotaLancamentoDTO dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Musica))
-                return BadRequest(new { Mensagem = "A música/peça avaliada é obrigatória." });
-
             if (dto.Alunos == null || dto.Alunos.Count == 0)
                 return BadRequest(new { Mensagem = "Nenhum aluno informado." });
+
+            if (dto.Alunos.Any(a => string.IsNullOrWhiteSpace(a.Musica)))
+                return BadRequest(new { Mensagem = "A música/peça avaliada é obrigatória para todos os alunos." });
 
             if (dto.Alunos.Any(a => a.ValorNota < 0 || a.ValorNota > 10))
                 return BadRequest(new { Mensagem = "As notas devem estar entre 0 e 10." });
@@ -144,18 +144,17 @@ namespace ComucAPI.Controllers
             var mesAno = new DateTime(dto.Mes.Year, dto.Mes.Month, 1);
             var idAlunos = dto.Alunos.Select(a => a.IdAluno).ToList();
 
-            // 3. Verifica duplicatas: professor já lançou notas para esse período?
-            var jaExiste = await _context.Notas
-                .AnyAsync(n =>
+            // 3. Busca notas já existentes deste professor para estes alunos neste período
+            var notasExistentes = await _context.Notas
+                .Include(n => n.Aluno)
+                .Where(n =>
                     idAlunos.Contains(n.Aluno.IdAluno) &&
                     n.Professor.IdProfessor == professorId &&
                     n.Mes.Year == mesAno.Year &&
-                    n.Mes.Month == mesAno.Month);
+                    n.Mes.Month == mesAno.Month)
+                .ToListAsync();
 
-            if (jaExiste)
-                return Conflict(new { Mensagem = "Você já lançou notas para este período. Use a opção de editar." });
-
-            // 4. Busca apenas alunos bolsistas que estão no request
+            // 4. Busca apenas alunos bolsistas
             var alunosBolsistas = await _context.Alunos
                 .Where(a => idAlunos.Contains(a.IdAluno) && a.Bolsista == true)
                 .ToListAsync();
@@ -163,21 +162,34 @@ namespace ComucAPI.Controllers
             if (alunosBolsistas.Count != dto.Alunos.Count)
                 return BadRequest(new { Mensagem = "Um ou mais alunos não encontrados ou não são bolsistas." });
 
-            // 5. Cria todas as notas em lote
-            var novas = dto.Alunos.Select(item => new Nota
+            // 5. Upsert: cria se não existe, atualiza se já existe
+            foreach (var item in dto.Alunos)
             {
-                ValorNota = item.ValorNota,
-                Mes = mesAno,
-                Musica = dto.Musica.Trim(),
-                Descricao = "",
-                Aluno = alunosBolsistas.First(a => a.IdAluno == item.IdAluno),
-                Professor = professor
-            }).ToList();
+                var notaExistente = notasExistentes.FirstOrDefault(n => n.Aluno.IdAluno == item.IdAluno);
 
-            _context.Notas.AddRange(novas);
+                if (notaExistente != null)
+                {
+                    notaExistente.ValorNota = item.ValorNota;
+                    notaExistente.Musica = item.Musica.Trim();
+                    notaExistente.Descricao = item.Descricao?.Trim() ?? "";
+                }
+                else
+                {
+                    var aluno = alunosBolsistas.First(a => a.IdAluno == item.IdAluno);
+                    _context.Notas.Add(new Nota
+                    {
+                        ValorNota = item.ValorNota,
+                        Mes = mesAno,
+                        Musica = item.Musica.Trim(),
+                        Descricao = item.Descricao?.Trim() ?? "",
+                        Aluno = aluno,
+                        Professor = professor
+                    });
+                }
+            }
+
             await _context.SaveChangesAsync();
-
-            return Ok(new { Mensagem = $"Notas lançadas com sucesso para {novas.Count} alunos." });
+            return Ok(new { Mensagem = "Notas registradas com sucesso." });
         }
 
         // GET: api/Nota/medias
@@ -220,7 +232,8 @@ namespace ComucAPI.Controllers
                     {
                         IdNota = n.IdNota,
                         Professor = n.Professor.Nome,
-                        Nota = n.ValorNota
+                        Nota = n.ValorNota,
+                        Descricao = n.Descricao
                     }).ToList(),
                     Media = grupo.Average(n => n.ValorNota)
                 })
