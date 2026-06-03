@@ -14,6 +14,7 @@ interface Aluno {
   nome: string
   bolsista: boolean
   bandas: Banda[]
+  motivoSaida?: string
 }
 
 interface FaltaAluno {
@@ -39,6 +40,7 @@ export default function Alunos() {
   const [busca, setBusca] = useState('')
   const [filtrarAberto, setFiltrarAberto] = useState(false)
   const [bandasSelecionadas, setBandasSelecionadas] = useState<string[]>([])
+  const [visuExAlunos, setVisuExAlunos] = useState(false)
   const filtrarRef = useRef<HTMLDivElement>(null)
 
   const anoAtual = new Date().getFullYear()
@@ -87,12 +89,22 @@ export default function Alunos() {
     const nomesBandas = a.bandas.map(b => b.nome)
     const matchBusca = busca === '' || a.nome.includes(busca) || nomesBandas.some(n => n.includes(busca))
     const matchFiltro = bandasSelecionadas.length === 0 || nomesBandas.some(n => bandasSelecionadas.includes(n))
-    return matchBusca && matchFiltro
+    const matchVisu = visuExAlunos ? !!a.motivoSaida?.trim() : !a.motivoSaida?.trim()
+    return matchBusca && matchFiltro && matchVisu
   })
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          .area-impressao, .area-impressao * { visibility: visible; }
+          .area-impressao { position: absolute; left: 0; top: 0; width: 100%; }
+          .no-print { display: none !important; }
+        }
+      `}</style>
+
+      <div className="flex items-center justify-between mb-6 no-print">
         <h1 className="text-2xl font-bold text-gray-900">Gestão de Alunos</h1>
         <div className="flex items-center gap-2">
           <button
@@ -100,7 +112,7 @@ export default function Alunos() {
             className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
           >
             <Printer size={15} />
-            Imprimir
+            Gerar Relatório
           </button>
           <button
             onClick={() => navigate('/alunos/novo')}
@@ -113,7 +125,7 @@ export default function Alunos() {
       </div>
 
       {/* Barra de busca + Filtrar */}
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2 mb-4 no-print">
         <div className="relative flex-1">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
           <input
@@ -124,6 +136,18 @@ export default function Alunos() {
             className="w-full border border-gray-300 rounded-lg pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition bg-white"
           />
         </div>
+
+        {/* Botão Mostrar Ex-Alunos */}
+        <button
+          onClick={() => { setVisuExAlunos(prev => !prev); setBusca(''); setBandasSelecionadas([]) }}
+          className={`flex items-center gap-1.5 text-sm border rounded-lg px-3 py-2 font-medium transition-colors ${
+            visuExAlunos
+              ? 'bg-gray-900 text-white border-gray-900 hover:bg-gray-700'
+              : 'text-gray-600 border-gray-300 hover:bg-gray-50'
+          }`}
+        >
+          Mostrar Ex-Alunos
+        </button>
 
         {/* Botão Filtrar + dropdown */}
         <div className="relative" ref={filtrarRef}>
@@ -178,6 +202,10 @@ export default function Alunos() {
         </div>
       </div>
 
+      <div className="area-impressao">
+        <p className="hidden print:block text-base font-semibold text-gray-900 mb-3">
+          {visuExAlunos ? 'Ex-Alunos' : 'Gestão de Alunos'}
+        </p>
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {isLoading ? (
           <p className="text-sm text-gray-500 p-5">Carregando alunos...</p>
@@ -185,7 +213,9 @@ export default function Alunos() {
           <p className="text-sm text-red-500 p-5">Erro ao carregar alunos. Verifique a conexão e tente novamente.</p>
         ) : alunosFiltrados.length === 0 ? (
           <p className="text-sm text-gray-500 p-5">
-            {busca || bandasSelecionadas.length > 0 ? 'Nenhum resultado encontrado.' : 'Nenhum aluno cadastrado.'}
+            {busca || bandasSelecionadas.length > 0
+              ? 'Nenhum resultado encontrado.'
+              : visuExAlunos ? 'Nenhum ex-aluno encontrado.' : 'Nenhum aluno cadastrado.'}
           </p>
         ) : (
           <table className="w-full text-sm">
@@ -194,8 +224,11 @@ export default function Alunos() {
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Nome Completo</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Banda</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Bolsista</th>
-                <th className="text-left px-5 py-3 font-medium text-gray-700">Faltas</th>
-                <th className="text-left px-5 py-3 font-medium text-gray-700">Ações</th>
+                {visuExAlunos
+                  ? <th className="text-left px-5 py-3 font-medium text-gray-700">Motivo da Saída</th>
+                  : <th className="text-left px-5 py-3 font-medium text-gray-700">Faltas</th>
+                }
+                <th className="text-left px-5 py-3 font-medium text-gray-700 no-print">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -208,8 +241,13 @@ export default function Alunos() {
                       : '—'}
                   </td>
                   <td className="px-5 py-3 text-gray-600">{aluno.bolsista ? 'Sim' : '—'}</td>
-                  <td className="px-5 py-3 text-gray-600">{faltasMap[aluno.idAluno] ?? 0}</td>
-                  <td className="px-5 py-3">
+                  {visuExAlunos
+                    ? <td className="px-5 py-3 text-gray-600">
+                        <p className="line-clamp-3 break-words">{aluno.motivoSaida || '—'}</p>
+                      </td>
+                    : <td className="px-5 py-3 text-gray-600">{faltasMap[aluno.idAluno] ?? 0}</td>
+                  }
+                  <td className="px-5 py-3 no-print">
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => navigate(`/alunos/${aluno.idAluno}/editar`)}
@@ -232,6 +270,7 @@ export default function Alunos() {
             </tbody>
           </table>
         )}
+      </div>
       </div>
 
       {confirmDelete !== null && (

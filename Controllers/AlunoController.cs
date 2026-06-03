@@ -41,6 +41,7 @@ namespace ComucAPI.Controllers
                     IdAluno = a.IdAluno,
                     Nome = a.Nome,
                     Bolsista = a.Bolsista,
+                    MotivoSaida = a.MotivoSaida,
                     Bandas = a.Bandas.Select(b => new { b.IdBanda, b.Nome }).ToList()
                 })
                 .ToListAsync();
@@ -50,48 +51,85 @@ namespace ComucAPI.Controllers
 
         // GET: api/Aluno/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Aluno>> GetAluno(int id)
+        public async Task<ActionResult> GetAluno(int id)
         {
-            var aluno = await _context.Alunos.FindAsync(id);
+            var aluno = await _context.Alunos
+                .Include(a => a.Bandas)
+                .Where(a => a.IdAluno == id)
+                .Select(a => new
+                {
+                    a.IdAluno,
+                    a.Nome,
+                    a.DataNascimento,
+                    a.Telefone,
+                    a.CPF,
+                    a.RG,
+                    a.Endereco,
+                    a.NomePai,
+                    a.NomeMae,
+                    a.DocumentoResponsavel,
+                    a.Bolsista,
+                    a.DataInicio,
+                    a.MotivoSaida,
+                    a.PossuiInstrumento,
+                    a.TamanhoVestimenta,
+                    Bandas = a.Bandas.Select(b => new { b.IdBanda, b.Nome }).ToList()
+                })
+                .FirstOrDefaultAsync();
 
             if (aluno == null)
-            {
                 return NotFound();
-            }
 
-            return aluno;
+            return Ok(aluno);
         }
 
         // PUT: api/Aluno/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAluno(int id, Aluno aluno)
+        public async Task<IActionResult> PutAluno(int id, AlunoEditDTO dto)
         {
-            if (id != aluno.IdAluno)
+            if (id != dto.IdAluno)
                 return BadRequest();
 
-            if (await _context.Alunos.AnyAsync(a => a.CPF == aluno.CPF && a.IdAluno != id))
+            var aluno = await _context.Alunos
+                .Include(a => a.Bandas)
+                .FirstOrDefaultAsync(a => a.IdAluno == id);
+
+            if (aluno == null)
+                return NotFound();
+
+            if (await _context.Alunos.AnyAsync(a => a.CPF == dto.CPF && a.IdAluno != id))
                 return Conflict(new { Mensagem = "Já existe um aluno cadastrado com este CPF." });
 
-            if (await _context.Alunos.AnyAsync(a => a.RG == aluno.RG && a.IdAluno != id))
+            if (await _context.Alunos.AnyAsync(a => a.RG == dto.RG && a.IdAluno != id))
                 return Conflict(new { Mensagem = "Já existe um aluno cadastrado com este RG." });
 
-            _context.Entry(aluno).State = EntityState.Modified;
+            aluno.Nome = dto.Nome;
+            aluno.DataNascimento = dto.DataNascimento;
+            aluno.Telefone = dto.Telefone;
+            aluno.CPF = dto.CPF;
+            aluno.RG = dto.RG;
+            aluno.Endereco = dto.Endereco;
+            aluno.NomePai = dto.NomePai;
+            aluno.NomeMae = dto.NomeMae;
+            aluno.DocumentoResponsavel = dto.DocumentoResponsavel;
+            aluno.Bolsista = dto.Bolsista;
+            aluno.DataInicio = dto.DataInicio;
+            aluno.MotivoSaida = dto.MotivoSaida;
+            aluno.PossuiInstrumento = dto.PossuiInstrumento;
+            aluno.TamanhoVestimenta = dto.TamanhoVestimenta;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AlunoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var bandasSelecionadas = await _context.Bandas
+                .Where(b => dto.IdBandas.Contains(b.IdBanda))
+                .ToListAsync();
+
+            aluno.Bandas.Clear();
+            foreach (var banda in bandasSelecionadas)
+                aluno.Bandas.Add(banda);
+
+            if (bandasSelecionadas.Count > 0)
+                aluno.MotivoSaida = string.Empty;
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }

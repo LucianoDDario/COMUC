@@ -43,6 +43,7 @@ const baseSchema = z.object({
   documentoResponsavel: z.string().max(50, 'Documento deve ter no máximo 50 caracteres').optional(),
   bolsista: z.enum(['sim', 'nao']),
   dataInicio: z.string().min(1, 'Data de início obrigatória'),
+  motivoSaida: z.string().max(100, 'Motivo deve ter no máximo 100 caracteres').optional(),
   possuiInstrumento: z.enum(['sim', 'nao']),
   tamanhoVestimenta: z.string().min(1, 'Tamanho da vestimenta obrigatório'),
   idBandas: z.array(z.number()),
@@ -65,7 +66,11 @@ const createSchema = baseSchema.superRefine((data, ctx) => {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Selecione ao menos uma banda', path: ['idBandas'] })
 })
 
-const editSchema = baseSchema.superRefine(menorRefine)
+const editSchema = baseSchema.superRefine((data, ctx) => {
+  menorRefine(data, ctx)
+  if (data.idBandas.length === 0 && !data.motivoSaida?.trim())
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Informe o motivo de saída ao remover todas as bandas', path: ['motivoSaida'] })
+})
 
 type AlunoFormData = z.infer<typeof baseSchema>
 
@@ -133,6 +138,7 @@ export default function AlunoForm() {
         documentoResponsavel: alunoExistente.documentoResponsavel ?? '',
         bolsista: alunoExistente.bolsista ? 'sim' : 'nao',
         dataInicio: alunoExistente.dataInicio?.split('T')[0] ?? '',
+        motivoSaida: alunoExistente.motivoSaida ?? '',
         possuiInstrumento: alunoExistente.possuiInstrumento ? 'sim' : 'nao',
         tamanhoVestimenta: alunoExistente.tamanhoVestimenta ?? '',
         idBandas: alunoExistente.bandas?.map((b: Banda) => b.idBanda) ?? [],
@@ -176,9 +182,10 @@ export default function AlunoForm() {
           documentoResponsavel: data.documentoResponsavel ?? '',
           bolsista: data.bolsista === 'sim',
           dataInicio: data.dataInicio ? new Date(data.dataInicio + 'T00:00:00Z').toISOString() : null,
-          motivoSaida: '',
+          motivoSaida: data.motivoSaida ?? '',
           possuiInstrumento: data.possuiInstrumento === 'sim',
           tamanhoVestimenta: data.tamanhoVestimenta ?? '',
+          idBandas: data.idBandas,
         })
       } else {
         await api.post('/Aluno', {
@@ -445,7 +452,7 @@ export default function AlunoForm() {
               {errors.tamanhoVestimenta && <span className="text-xs text-red-500">{errors.tamanhoVestimenta.message}</span>}
             </div>
 
-            {!isEdit && bandas.length > 0 && (
+            {bandas.length > 0 && (
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-gray-700">Bandas</label>
                 <div className="flex flex-wrap gap-2">
@@ -471,17 +478,23 @@ export default function AlunoForm() {
               </div>
             )}
 
-            {isEdit && alunoExistente?.bandas?.length > 0 && (
-              <div className="flex flex-col gap-2">
-                <label className="text-sm font-medium text-gray-700">Bandas</label>
-                <div className="flex flex-wrap gap-2">
-                  {alunoExistente.bandas.map((b: Banda) => (
-                    <span key={b.idBanda} className="text-xs px-3 py-1.5 rounded-lg border border-gray-300 text-gray-600 bg-gray-50">
-                      {b.nome}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-400">Para alterar as bandas, use a página de Gestão de Bandas.</p>
+            {isEdit && (
+              <div className="flex flex-col gap-1">
+                <label className="text-sm font-medium text-gray-700">
+                  Motivo de Saída
+                  {idBandasSelecionadas.length === 0
+                    ? <span className="ml-1 text-red-500">*</span>
+                    : <span className="ml-1 text-xs font-normal text-gray-400">(opcional)</span>
+                  }
+                </label>
+                <input
+                  type="text"
+                  placeholder="Preencha caso o aluno tenha saído"
+                  maxLength={100}
+                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
+                  {...register('motivoSaida')}
+                />
+                {errors.motivoSaida && <span className="text-xs text-red-500">{errors.motivoSaida.message}</span>}
               </div>
             )}
 
