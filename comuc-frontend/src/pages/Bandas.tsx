@@ -107,7 +107,7 @@ export default function Bandas() {
 
   const vincularMutation = useMutation({
     mutationFn: () => {
-      const idAlvo = modalVincular!.subTurmas.length > 0 ? subTurmaVincular! : modalVincular!.idBanda
+      const idAlvo = (modalVincular!.subTurmas ?? []).length > 0 ? subTurmaVincular! : modalVincular!.idBanda
       return api.post(`/Banda/${idAlvo}/vincular-aluno`, { idAluno: Number(idAlunoVincular) })
     },
     onSuccess: () => {

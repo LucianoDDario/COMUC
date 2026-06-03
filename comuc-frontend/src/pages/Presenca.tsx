@@ -204,7 +204,7 @@ export default function Presenca() {
                   />
                 </label>
               </div>
-            <table className="w-full text-sm">
+              <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="text-left px-5 py-3 font-medium text-gray-700">Nome do Aluno</th>

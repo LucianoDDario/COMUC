@@ -236,8 +236,8 @@ export default function Alunos() {
                 <tr key={aluno.idAluno} className="hover:bg-gray-50">
                   <td className="px-5 py-3 font-medium text-gray-900">{aluno.nome}</td>
                   <td className="px-5 py-3 text-gray-600">
-                    {aluno.bandas.length > 0
-                      ? <div className="flex flex-col gap-0.5">{aluno.bandas.map(b => <span key={b.idBanda}>{b.nome}</span>)}</div>
+                    {(aluno.bandas ?? []).length > 0
+                      ? <div className="flex flex-col gap-0.5">{(aluno.bandas ?? []).map(b => <span key={b.idBanda}>{b.nome}</span>)}</div>
                       : '—'}
                   </td>
                   <td className="px-5 py-3 text-gray-600">{aluno.bolsista ? 'Sim' : '—'}</td>
