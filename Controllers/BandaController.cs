@@ -153,11 +153,15 @@ namespace ComucAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBanda(int id)
         {
-            var banda = await _context.Bandas.FindAsync(id);
+            var banda = await _context.Bandas
+                .Include(b => b.SubTurmas)
+                .FirstOrDefaultAsync(b => b.IdBanda == id);
+
             if (banda == null)
-            {
                 return NotFound();
-            }
+
+            if (banda.SubTurmas != null && banda.SubTurmas.Any())
+                _context.Bandas.RemoveRange(banda.SubTurmas);
 
             _context.Bandas.Remove(banda);
             await _context.SaveChangesAsync();
