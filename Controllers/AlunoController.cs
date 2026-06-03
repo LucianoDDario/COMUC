@@ -35,16 +35,26 @@ namespace ComucAPI.Controllers
             if (bolsista.HasValue)
                 query = query.Where(a => a.Bolsista == bolsista.Value);
 
-            var alunos = await query
-                .Select(a => new
+            var bandaLookup = await _context.Bandas
+                .Include(b => b.BandaPai)
+                .ToDictionaryAsync(b => b.IdBanda, b => b.BandaPai != null
+                    ? b.BandaPai.Nome + " - " + b.Nome
+                    : b.Nome);
+
+            var alunosRaw = await query.ToListAsync();
+
+            var alunos = alunosRaw.Select(a => new
+            {
+                IdAluno = a.IdAluno,
+                Nome = a.Nome,
+                Bolsista = a.Bolsista,
+                MotivoSaida = a.MotivoSaida,
+                Bandas = a.Bandas.Select(b => new
                 {
-                    IdAluno = a.IdAluno,
-                    Nome = a.Nome,
-                    Bolsista = a.Bolsista,
-                    MotivoSaida = a.MotivoSaida,
-                    Bandas = a.Bandas.Select(b => new { b.IdBanda, b.Nome }).ToList()
-                })
-                .ToListAsync();
+                    b.IdBanda,
+                    Nome = bandaLookup.TryGetValue(b.IdBanda, out var nome) ? nome : b.Nome
+                }).ToList()
+            });
 
             return Ok(alunos);
         }
@@ -54,7 +64,7 @@ namespace ComucAPI.Controllers
         public async Task<ActionResult> GetAluno(int id)
         {
             var aluno = await _context.Alunos
-                .Include(a => a.Bandas)
+                .Include(a => a.Bandas).ThenInclude(b => b.BandaPai)
                 .Where(a => a.IdAluno == id)
                 .Select(a => new
                 {

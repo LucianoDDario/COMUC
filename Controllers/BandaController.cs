@@ -44,6 +44,34 @@ namespace ComucAPI.Controllers
             return Ok(bandas);
         }
 
+        // GET: api/Banda/hierarquia
+        [HttpGet("hierarquia")]
+        public async Task<ActionResult> GetBandasHierarquia()
+        {
+            var bandas = await _context.Bandas
+                .Where(b => b.banda_pai_id == null)
+                .Include(b => b.SubTurmas).ThenInclude(s => s.Alunos)
+                .Include(b => b.Alunos)
+                .Include(b => b.Professor)
+                .Select(b => new
+                {
+                    IdBanda = b.IdBanda,
+                    Nome = b.Nome,
+                    IdProfessor = b.id_professor,
+                    NomeProfessor = b.Professor != null ? b.Professor.Nome : "Sem professor",
+                    TotalAlunos = b.Alunos.Count + b.SubTurmas.Sum(s => s.Alunos.Count),
+                    SubTurmas = b.SubTurmas.Select(s => new
+                    {
+                        s.IdBanda,
+                        s.Nome,
+                        TotalAlunos = s.Alunos.Count
+                    }).ToList()
+                })
+                .ToListAsync();
+
+            return Ok(bandas);
+        }
+
         // GET: api/Banda/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Banda>> GetBanda(int id)
@@ -114,12 +142,23 @@ namespace ComucAPI.Controllers
             _context.Bandas.Add(banda);
             await _context.SaveChangesAsync();
 
-            // 4. Retorna sucesso confirmando os dados criados
+            // 4. Se solicitado, cria sub-turmas Manhã e Tarde
+            if (dto.TemTurnos)
+            {
+                _context.Bandas.AddRange(
+                    new Banda { Nome = "Manhã", id_professor = dto.IdProfessor, banda_pai_id = banda.IdBanda },
+                    new Banda { Nome = "Tarde", id_professor = dto.IdProfessor, banda_pai_id = banda.IdBanda }
+                );
+                await _context.SaveChangesAsync();
+            }
+
+            // 5. Retorna sucesso confirmando os dados criados
             return CreatedAtAction("GetBanda", new { id = banda.IdBanda }, new
             {
                 IdBanda = banda.IdBanda,
                 Nome = banda.Nome,
-                IdProfessor = banda.id_professor
+                IdProfessor = banda.id_professor,
+                TemTurnos = dto.TemTurnos
             });
         }
 

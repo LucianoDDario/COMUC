@@ -7,9 +7,15 @@ import { useQuery } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import api from '@/lib/api'
 
-interface Banda {
+interface SubTurma {
   idBanda: number
   nome: string
+}
+
+interface BandaHierarquia {
+  idBanda: number
+  nome: string
+  subTurmas: SubTurma[]
 }
 
 function isMenorDeIdade(dataNascimento: string): boolean {
@@ -76,8 +82,8 @@ type AlunoFormData = z.infer<typeof baseSchema>
 
 const ETAPA_1_FIELDS: (keyof AlunoFormData)[] = ['nome', 'dataNascimento', 'telefone', 'cpf', 'rg', 'endereco']
 
-async function fetchBandas(): Promise<Banda[]> {
-  const res = await api.get('/Banda')
+async function fetchBandas(): Promise<BandaHierarquia[]> {
+  const res = await api.get('/Banda/hierarquia')
   return res.data
 }
 
@@ -96,7 +102,7 @@ export default function AlunoForm() {
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState('')
 
-  const { data: bandas = [] } = useQuery({
+  const { data: bandas = [] } = useQuery<BandaHierarquia[]>({
     queryKey: ['bandas'],
     queryFn: fetchBandas,
   })
@@ -150,12 +156,20 @@ export default function AlunoForm() {
   const dataNascimentoWatch = watch('dataNascimento')
   const eMenor = isMenorDeIdade(dataNascimentoWatch)
 
-  function toggleBanda(idBanda: number) {
-    const atual = idBandasSelecionadas
-    if (atual.includes(idBanda)) {
-      setValue('idBandas', atual.filter(id => id !== idBanda))
+  function toggleBandaSimples(idBanda: number) {
+    if (idBandasSelecionadas.includes(idBanda)) {
+      setValue('idBandas', idBandasSelecionadas.filter(id => id !== idBanda))
     } else {
-      setValue('idBandas', [...atual, idBanda])
+      setValue('idBandas', [...idBandasSelecionadas, idBanda])
+    }
+  }
+
+  function togglePeriodo(subBandaId: number, todosSubIds: number[]) {
+    const semIrmaos = idBandasSelecionadas.filter(id => !todosSubIds.includes(id))
+    if (idBandasSelecionadas.includes(subBandaId)) {
+      setValue('idBandas', semIrmaos)
+    } else {
+      setValue('idBandas', [...semIrmaos, subBandaId])
     }
   }
 
@@ -456,22 +470,42 @@ export default function AlunoForm() {
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-medium text-gray-700">Bandas</label>
                 <div className="flex flex-wrap gap-2">
-                  {bandas.map(banda => {
-                    const selecionada = idBandasSelecionadas.includes(banda.idBanda)
-                    return (
-                      <button
-                        key={banda.idBanda}
-                        type="button"
-                        onClick={() => toggleBanda(banda.idBanda)}
-                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
-                          selecionada
-                            ? 'bg-gray-900 text-white border-gray-900'
-                            : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                        }`}
-                      >
-                        {banda.nome}
-                      </button>
-                    )
+                  {bandas.flatMap(banda => {
+                    if (banda.subTurmas.length === 0) {
+                      const selecionada = idBandasSelecionadas.includes(banda.idBanda)
+                      return [(
+                        <button
+                          key={banda.idBanda}
+                          type="button"
+                          onClick={() => toggleBandaSimples(banda.idBanda)}
+                          className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                            selecionada
+                              ? 'bg-gray-900 text-white border-gray-900'
+                              : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                          }`}
+                        >
+                          {banda.nome}
+                        </button>
+                      )]
+                    }
+                    const todosSubIds = banda.subTurmas.map(s => s.idBanda)
+                    return banda.subTurmas.map(sub => {
+                      const selecionado = idBandasSelecionadas.includes(sub.idBanda)
+                      return (
+                        <button
+                          key={sub.idBanda}
+                          type="button"
+                          onClick={() => togglePeriodo(sub.idBanda, todosSubIds)}
+                          className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                            selecionado
+                              ? 'bg-gray-900 text-white border-gray-900'
+                              : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                          }`}
+                        >
+                          {banda.nome} - {sub.nome}
+                        </button>
+                      )
+                    })
                   })}
                 </div>
                 {errors.idBandas && <span className="text-xs text-red-500">{errors.idBandas.message}</span>}
@@ -506,7 +540,7 @@ export default function AlunoForm() {
                 onClick={() => setEtapa(1)}
                 className="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
               >
-                Anterior
+                Voltar
               </button>
               <button
                 type="submit"

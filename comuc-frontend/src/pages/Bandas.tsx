@@ -3,12 +3,19 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, UserPlus, Pencil, Trash2, Users } from 'lucide-react'
 import api from '@/lib/api'
 
+interface SubTurma {
+  idBanda: number
+  nome: string
+  totalAlunos: number
+}
+
 interface Banda {
   idBanda: number
   nome: string
   idProfessor: number
   nomeProfessor: string
   totalAlunos: number
+  subTurmas: SubTurma[]
 }
 
 interface Professor {
@@ -23,7 +30,7 @@ interface Aluno {
 
 
 async function fetchBandas(): Promise<Banda[]> {
-  const res = await api.get('/Banda')
+  const res = await api.get('/Banda/hierarquia')
   return res.data
 }
 
@@ -41,12 +48,14 @@ export default function Bandas() {
   const queryClient = useQueryClient()
 
   const [modalAdicionar, setModalAdicionar] = useState(false)
-  const [modalVincular, setModalVincular] = useState<number | null>(null)
+  const [modalVincular, setModalVincular] = useState<Banda | null>(null)
+  const [subTurmaVincular, setSubTurmaVincular] = useState<number | null>(null)
   const [modalEditar, setModalEditar] = useState<Banda | null>(null)
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null)
 
   const [nomeBanda, setNomeBanda] = useState('')
   const [idProfessor, setIdProfessor] = useState('')
+  const [temTurnos, setTemTurnos] = useState(false)
   const [nomeEditar, setNomeEditar] = useState('')
   const [idAlunoVincular, setIdAlunoVincular] = useState('')
   const [erroCriar, setErroCriar] = useState('')
@@ -70,12 +79,13 @@ export default function Bandas() {
   })
 
   const criarMutation = useMutation({
-    mutationFn: () => api.post('/Banda', { nome: nomeBanda, idProfessor: Number(idProfessor) }),
+    mutationFn: () => api.post('/Banda', { nome: nomeBanda, idProfessor: Number(idProfessor), temTurnos }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bandas'] })
       setModalAdicionar(false)
       setNomeBanda('')
       setIdProfessor('')
+      setTemTurnos(false)
       setErroCriar('')
     },
     onError: () => setErroCriar('Erro ao adicionar banda. Tente novamente.'),
@@ -98,11 +108,14 @@ export default function Bandas() {
   })
 
   const vincularMutation = useMutation({
-    mutationFn: (idBanda: number) =>
-      api.post(`/Banda/${idBanda}/vincular-aluno`, { idAluno: Number(idAlunoVincular) }),
+    mutationFn: () => {
+      const idAlvo = modalVincular!.subTurmas.length > 0 ? subTurmaVincular! : modalVincular!.idBanda
+      return api.post(`/Banda/${idAlvo}/vincular-aluno`, { idAluno: Number(idAlunoVincular) })
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bandas'] })
       setModalVincular(null)
+      setSubTurmaVincular(null)
       setIdAlunoVincular('')
       setErroVincular('')
     },
@@ -147,17 +160,36 @@ export default function Bandas() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {bandas.map(banda => (
             <div key={banda.idBanda} className="bg-white rounded-xl border border-gray-200 p-5 flex flex-col gap-3">
-              <div>
+              <div className="flex-1">
                 <h2 className="font-semibold text-gray-900 text-base">{banda.nome}</h2>
                 <p className="text-xs text-gray-500 mt-0.5">{banda.nomeProfessor}</p>
-                <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
-                  <Users size={13} />
-                  {banda.totalAlunos} {banda.totalAlunos === 1 ? 'membro' : 'membros'}
-                </div>
+
+                {banda.subTurmas.length > 0 ? (
+                  <div className="mt-2 flex flex-col gap-1">
+                    {banda.subTurmas.map(sub => (
+                      <div key={sub.idBanda} className="flex items-center justify-between text-xs text-gray-500">
+                        <span className="font-medium text-gray-700">{sub.nome}</span>
+                        <span className="flex items-center gap-1">
+                          <Users size={11} />
+                          {sub.totalAlunos} {sub.totalAlunos === 1 ? 'membro' : 'membros'}
+                        </span>
+                      </div>
+                    ))}
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Total: {banda.totalAlunos} {banda.totalAlunos === 1 ? 'membro' : 'membros'}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+                    <Users size={13} />
+                    {banda.totalAlunos} {banda.totalAlunos === 1 ? 'membro' : 'membros'}
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-2 pt-2 border-t border-gray-100">
+
+              <div className="flex items-center gap-2 pt-2 border-t border-gray-100 mt-auto">
                 <button
-                  onClick={() => setModalVincular(banda.idBanda)}
+                  onClick={() => setModalVincular(banda)}
                   className="flex items-center gap-1.5 text-xs text-gray-600 border border-gray-300 rounded-lg px-2.5 py-1.5 hover:bg-gray-50 transition-colors"
                 >
                   <UserPlus size={13} />
@@ -214,6 +246,15 @@ export default function Bandas() {
                   ))}
                 </select>
               </div>
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={temTurnos}
+                  onChange={e => setTemTurnos(e.target.checked)}
+                  className="w-4 h-4 accent-gray-900"
+                />
+                <span className="text-sm text-gray-700">Possui turnos (Manhã e Tarde)</span>
+              </label>
             </div>
             {erroCriar && <p className="text-xs text-red-500 mt-3">{erroCriar}</p>}
             <div className="flex justify-end gap-2 mt-5">
@@ -239,31 +280,59 @@ export default function Bandas() {
       {modalVincular !== null && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-sm mx-4">
-            <h2 className="text-base font-semibold text-gray-900 mb-4">Vincular Aluno</h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Selecionar Aluno</label>
-              <select
-                value={idAlunoVincular}
-                onChange={e => setIdAlunoVincular(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition bg-white"
-              >
-                <option value="">Selecionar aluno...</option>
-                {alunos.map(a => (
-                  <option key={a.idAluno} value={a.idAluno}>{a.nome}</option>
-                ))}
-              </select>
+            <h2 className="text-base font-semibold text-gray-900 mb-1">Vincular Aluno</h2>
+            <p className="text-xs text-gray-500 mb-4">{modalVincular.nome}</p>
+            <div className="flex flex-col gap-4">
+              {modalVincular.subTurmas.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Turno <span className="text-red-500">*</span></label>
+                  <div className="flex gap-2">
+                    {modalVincular.subTurmas.map(sub => (
+                      <button
+                        key={sub.idBanda}
+                        type="button"
+                        onClick={() => setSubTurmaVincular(sub.idBanda)}
+                        className={`flex-1 py-2 text-sm rounded-lg border transition-colors ${
+                          subTurmaVincular === sub.idBanda
+                            ? 'bg-gray-900 text-white border-gray-900'
+                            : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        {sub.nome}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Aluno <span className="text-red-500">*</span></label>
+                <select
+                  value={idAlunoVincular}
+                  onChange={e => setIdAlunoVincular(e.target.value)}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition bg-white"
+                >
+                  <option value="">Selecionar aluno...</option>
+                  {alunos.map(a => (
+                    <option key={a.idAluno} value={a.idAluno}>{a.nome}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             {erroVincular && <p className="text-xs text-red-500 mt-3">{erroVincular}</p>}
             <div className="flex justify-end gap-2 mt-5">
               <button
-                onClick={() => { setModalVincular(null); setIdAlunoVincular(''); setErroVincular('') }}
+                onClick={() => { setModalVincular(null); setSubTurmaVincular(null); setIdAlunoVincular(''); setErroVincular('') }}
                 className="text-sm border border-gray-300 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors"
               >
                 Cancelar
               </button>
               <button
-                onClick={() => vincularMutation.mutate(modalVincular)}
-                disabled={!idAlunoVincular || vincularMutation.isPending}
+                onClick={() => vincularMutation.mutate()}
+                disabled={
+                  !idAlunoVincular ||
+                  (modalVincular.subTurmas.length > 0 && !subTurmaVincular) ||
+                  vincularMutation.isPending
+                }
                 className="text-sm bg-gray-900 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-4 py-2 rounded-lg transition-colors"
               >
                 {vincularMutation.isPending ? 'Vinculando...' : 'Vincular'}
