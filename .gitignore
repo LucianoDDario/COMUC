@@ -7,3 +7,14 @@
 appsettings.local.json
 secrets.json
 .env
+
+# Build output
+bin/
+obj/
+
+# Node
+comuc-frontend/node_modules/
+comuc-frontend/dist/
+
+# Claude
+.claude/
