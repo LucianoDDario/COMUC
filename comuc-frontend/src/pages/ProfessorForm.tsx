@@ -7,27 +7,37 @@ import { useQuery } from '@tanstack/react-query'
 import { ChevronLeft } from 'lucide-react'
 import api from '@/lib/api'
 
-const createSchema = z.object({
+const camposComuns = {
   nome: z.string().min(1, 'Nome obrigatório'),
+  cpf: z.string()
+    .min(11, 'CPF deve ter 11 dígitos')
+    .max(11, 'CPF deve ter 11 dígitos')
+    .regex(/^\d+$/, 'CPF deve conter apenas números'),
+  rg: z.string()
+    .min(7, 'RG deve ter no mínimo 7 dígitos')
+    .max(9, 'RG deve ter no máximo 9 dígitos')
+    .regex(/^\d+$/, 'RG deve conter apenas números'),
+  telefone: z.string()
+    .min(10, 'Telefone deve ter no mínimo 10 dígitos')
+    .max(11, 'Telefone deve ter no máximo 11 dígitos')
+    .regex(/^\d+$/, 'Telefone deve conter apenas números'),
+  dataNascimento: z.string()
+    .min(1, 'Data de nascimento obrigatória')
+    .refine(d => new Date(d + 'T00:00:00') <= new Date(), 'Data de nascimento não pode ser no futuro'),
+  endereco: z.string().min(1, 'Endereço obrigatório'),
+}
+
+const createSchema = z.object({
+  ...camposComuns,
   senha: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres'),
-  cpf: z.string().max(11, 'CPF deve ter 11 dígitos').optional(),
-  rg: z.string().max(9, 'RG deve ter no máximo 9 caracteres').optional(),
-  telefone: z.string().max(20).optional(),
-  dataNascimento: z.string().optional(),
-  endereco: z.string().optional(),
 })
 
 const editSchema = z.object({
-  nome: z.string().min(1, 'Nome obrigatório'),
+  ...camposComuns,
   senha: z.string().optional(),
-  cpf: z.string().max(11, 'CPF deve ter 11 dígitos').optional(),
-  rg: z.string().max(9, 'RG deve ter no máximo 9 caracteres').optional(),
-  telefone: z.string().max(20).optional(),
-  dataNascimento: z.string().optional(),
-  endereco: z.string().optional(),
 })
 
-type ProfessorFormData = { nome: string; senha?: string; cpf?: string; rg?: string; telefone?: string; dataNascimento?: string; endereco?: string }
+type ProfessorFormData = z.infer<typeof createSchema> & { senha?: string }
 
 async function fetchProfessor(id: number) {
   const res = await api.get(`/Professors/${id}`)
@@ -183,20 +193,23 @@ export default function ProfessorForm() {
             <label className="text-sm font-medium text-gray-700">Data de Nascimento</label>
             <input
               type="date"
+              max="9999-12-31"
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
               {...register('dataNascimento')}
             />
+            {errors.dataNascimento && <span className="text-xs text-red-500">{errors.dataNascimento.message}</span>}
           </div>
 
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium text-gray-700">Telefone</label>
             <input
               type="text"
-              placeholder="(11) 98765-4321"
-              maxLength={20}
+              placeholder="11987654321"
+              maxLength={11}
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition"
               {...register('telefone')}
             />
+            {errors.telefone && <span className="text-xs text-red-500">{errors.telefone.message}</span>}
           </div>
 
           <div className="flex flex-col gap-1">
@@ -207,6 +220,7 @@ export default function ProfessorForm() {
               className="border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-gray-900 transition resize-none"
               {...register('endereco')}
             />
+            {errors.endereco && <span className="text-xs text-red-500">{errors.endereco.message}</span>}
           </div>
 
           {erro && <p className="text-xs text-red-500">{erro}</p>}

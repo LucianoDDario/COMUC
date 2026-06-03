@@ -60,7 +60,7 @@ namespace ComucAPI.Controllers
                     IdProfessor = b.id_professor,
                     NomeProfessor = b.Professor != null ? b.Professor.Nome : "Sem professor",
                     TotalAlunos = b.Alunos.Count + b.SubTurmas.Sum(s => s.Alunos.Count),
-                    SubTurmas = b.SubTurmas.Select(s => new
+                    SubTurmas = (b.SubTurmas ?? new List<Banda>()).Select(s => new
                     {
                         s.IdBanda,
                         s.Nome,

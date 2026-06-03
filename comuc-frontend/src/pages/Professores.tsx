@@ -11,6 +11,21 @@ interface Professor {
   telefone?: string
 }
 
+function formatarCPF(cpf?: string) {
+  if (!cpf) return '—'
+  const d = cpf.replace(/\D/g, '')
+  if (d.length !== 11) return cpf
+  return `${d.slice(0,3)}.${d.slice(3,6)}.${d.slice(6,9)}-${d.slice(9)}`
+}
+
+function formatarTelefone(tel?: string) {
+  if (!tel) return '—'
+  const d = tel.replace(/\D/g, '')
+  if (d.length === 11) return `(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`
+  if (d.length === 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`
+  return tel
+}
+
 async function fetchProfessores(): Promise<Professor[]> {
   const res = await api.get('/Professors')
   return res.data
@@ -77,8 +92,8 @@ export default function Professores() {
               {professores.map(professor => (
                 <tr key={professor.idProfessor} className="hover:bg-gray-50">
                   <td className="px-5 py-3 font-medium text-gray-900 capitalize">{professor.nome}</td>
-                  <td className="px-5 py-3 text-gray-600">{professor.cpf ?? '—'}</td>
-                  <td className="px-5 py-3 text-gray-600">{professor.telefone || '—'}</td>
+                  <td className="px-5 py-3 text-gray-600">{formatarCPF(professor.cpf)}</td>
+                  <td className="px-5 py-3 text-gray-600">{formatarTelefone(professor.telefone)}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">
                       <button

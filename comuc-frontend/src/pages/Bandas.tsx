@@ -164,9 +164,9 @@ export default function Bandas() {
                 <h2 className="font-semibold text-gray-900 text-base">{banda.nome}</h2>
                 <p className="text-xs text-gray-500 mt-0.5">{banda.nomeProfessor}</p>
 
-                {banda.subTurmas.length > 0 ? (
+                {(banda.subTurmas ?? []).length > 0 ? (
                   <div className="mt-2 flex flex-col gap-1">
-                    {banda.subTurmas.map(sub => (
+                    {(banda.subTurmas ?? []).map(sub => (
                       <div key={sub.idBanda} className="flex items-center justify-between text-xs text-gray-500">
                         <span className="font-medium text-gray-700">{sub.nome}</span>
                         <span className="flex items-center gap-1">
@@ -283,11 +283,11 @@ export default function Bandas() {
             <h2 className="text-base font-semibold text-gray-900 mb-1">Vincular Aluno</h2>
             <p className="text-xs text-gray-500 mb-4">{modalVincular.nome}</p>
             <div className="flex flex-col gap-4">
-              {modalVincular.subTurmas.length > 0 && (
+              {(modalVincular.subTurmas ?? []).length > 0 && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Turno <span className="text-red-500">*</span></label>
                   <div className="flex gap-2">
-                    {modalVincular.subTurmas.map(sub => (
+                    {(modalVincular.subTurmas ?? []).map(sub => (
                       <button
                         key={sub.idBanda}
                         type="button"
@@ -330,7 +330,7 @@ export default function Bandas() {
                 onClick={() => vincularMutation.mutate()}
                 disabled={
                   !idAlunoVincular ||
-                  (modalVincular.subTurmas.length > 0 && !subTurmaVincular) ||
+                  ((modalVincular.subTurmas ?? []).length > 0 && !subTurmaVincular) ||
                   vincularMutation.isPending
                 }
                 className="text-sm bg-gray-900 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold px-4 py-2 rounded-lg transition-colors"
