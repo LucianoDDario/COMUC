@@ -276,7 +276,7 @@ export default function Notas() {
             className="flex items-center gap-1.5 text-sm text-gray-600 border border-gray-300 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
           >
             <Printer size={15} />
-            Imprimir
+            Gerar relatório
           </button>
         )}
       </div>
@@ -404,12 +404,13 @@ export default function Notas() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="text-left px-5 py-3 font-medium text-gray-700">Nome do Aluno</th>
-                  <th className="text-left px-5 py-3 font-medium text-gray-700">Nota Professor 1</th>
-                  <th className="text-left px-5 py-3 font-medium text-gray-700">Nota Professor 2</th>
+                  <th className="text-left px-5 py-3 font-medium text-gray-700">Nota Márcio</th>
+                  <th className="text-left px-5 py-3 font-medium text-gray-700">Nota Lincoln</th>
                   <th className="text-left px-5 py-3 font-medium text-gray-700">Média <span className="text-xs font-normal text-gray-400">(mín. 7)</span></th>
+                  <th className="text-left px-5 py-3 font-medium text-gray-700">Valor da Bolsa</th>
                   <th className="text-left px-5 py-3 font-medium text-gray-700">Música</th>
                   <th className="text-left px-5 py-3 font-medium text-gray-700">Descrição</th>
-                  <th className="text-left px-5 py-3 font-medium text-gray-700">Ações</th>
+                  <th className="text-left px-5 py-3 font-medium text-gray-700 no-print">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -465,6 +466,10 @@ export default function Notas() {
                       </td>
 
                       <td className="px-5 py-3 text-gray-600">
+                        {row.media >= 8.5 ? 300 : row.media >= 8 ? 200 : row.media >= 7 ? 150 : '—'}
+                      </td>
+
+                      <td className="px-5 py-3 text-gray-600">
                         {isEditing ? (
                           <input type="text"
                             value={editMusica}
@@ -508,7 +513,7 @@ export default function Notas() {
                         )}
                       </td>
 
-                      <td className="px-5 py-3">
+                      <td className="px-5 py-3 no-print">
                         {isEditing ? (
                           <div className="flex items-center gap-2">
                             <button onClick={() => editarMutation.mutate(row)} disabled={editarMutation.isPending}
