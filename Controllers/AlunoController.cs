@@ -24,16 +24,23 @@ namespace ComucAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Aluno
+        // GET: api/Aluno?bolsista=true
         [HttpGet]
-        public async Task<ActionResult> GetAlunos()
+        public async Task<ActionResult> GetAlunos([FromQuery] bool? bolsista)
         {
-            var alunos = await _context.Alunos
+            var query = _context.Alunos
                 .Include(a => a.Bandas)
+                .AsQueryable();
+
+            if (bolsista.HasValue)
+                query = query.Where(a => a.Bolsista == bolsista.Value);
+
+            var alunos = await query
                 .Select(a => new
                 {
                     IdAluno = a.IdAluno,
                     Nome = a.Nome,
+                    Bolsista = a.Bolsista,
                     Bandas = a.Bandas.Select(b => new { b.IdBanda, b.Nome }).ToList()
                 })
                 .ToListAsync();
@@ -56,14 +63,17 @@ namespace ComucAPI.Controllers
         }
 
         // PUT: api/Aluno/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAluno(int id, Aluno aluno)
         {
             if (id != aluno.IdAluno)
-            {
                 return BadRequest();
-            }
+
+            if (await _context.Alunos.AnyAsync(a => a.CPF == aluno.CPF && a.IdAluno != id))
+                return Conflict(new { Mensagem = "Já existe um aluno cadastrado com este CPF." });
+
+            if (await _context.Alunos.AnyAsync(a => a.RG == aluno.RG && a.IdAluno != id))
+                return Conflict(new { Mensagem = "Já existe um aluno cadastrado com este RG." });
 
             _context.Entry(aluno).State = EntityState.Modified;
 
@@ -87,11 +97,17 @@ namespace ComucAPI.Controllers
         }
 
         // POST: api/Aluno
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Aluno>> PostAluno([FromBody] AlunoCreateDTO dto)
         {
-            // 1. Busca no banco de dados todas as bandas cujos IDs foram enviados no DTO
+            // 1. Verifica CPF e RG duplicados
+            if (await _context.Alunos.AnyAsync(a => a.CPF == dto.CPF))
+                return Conflict(new { Mensagem = "Já existe um aluno cadastrado com este CPF." });
+
+            if (await _context.Alunos.AnyAsync(a => a.RG == dto.RG))
+                return Conflict(new { Mensagem = "Já existe um aluno cadastrado com este RG." });
+
+            // 2. Busca no banco de dados todas as bandas cujos IDs foram enviados no DTO
             var bandasSelecionadas = await _context.Bandas
                 .Where(b => dto.IdBandas.Contains(b.IdBanda))
                 .ToListAsync();

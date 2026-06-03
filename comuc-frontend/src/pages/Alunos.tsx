@@ -12,6 +12,7 @@ interface Banda {
 interface Aluno {
   idAluno: number
   nome: string
+  bolsista: boolean
   bandas: Banda[]
 }
 
@@ -192,6 +193,7 @@ export default function Alunos() {
               <tr>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Nome Completo</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Banda</th>
+                <th className="text-left px-5 py-3 font-medium text-gray-700">Bolsista</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Faltas</th>
                 <th className="text-left px-5 py-3 font-medium text-gray-700">Ações</th>
               </tr>
@@ -205,6 +207,7 @@ export default function Alunos() {
                       ? <div className="flex flex-col gap-0.5">{aluno.bandas.map(b => <span key={b.idBanda}>{b.nome}</span>)}</div>
                       : '—'}
                   </td>
+                  <td className="px-5 py-3 text-gray-600">{aluno.bolsista ? 'Sim' : '—'}</td>
                   <td className="px-5 py-3 text-gray-600">{faltasMap[aluno.idAluno] ?? 0}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-2">

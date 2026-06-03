@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ComucAPI.Controllers
@@ -113,6 +114,70 @@ namespace ComucAPI.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { Mensagem = "Nota lançada com sucesso!" });
+        }
+
+        // POST: api/Nota/lancamento-lote — apenas Professor pode lançar notas
+        [Authorize(Roles = "Professor")]
+        [HttpPost("lancamento-lote")]
+        public async Task<ActionResult> LancamentoLote([FromBody] NotaLancamentoDTO dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Musica))
+                return BadRequest(new { Mensagem = "A música/peça avaliada é obrigatória." });
+
+            if (dto.Alunos == null || dto.Alunos.Count == 0)
+                return BadRequest(new { Mensagem = "Nenhum aluno informado." });
+
+            if (dto.Alunos.Any(a => a.ValorNota < 0 || a.ValorNota > 10))
+                return BadRequest(new { Mensagem = "As notas devem estar entre 0 e 10." });
+
+            // 1. Identifica o professor pelo token JWT
+            var idClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (idClaim == null)
+                return Unauthorized(new { Mensagem = "Professor não identificado." });
+
+            int professorId = int.Parse(idClaim);
+            var professor = await _context.Professores.FindAsync(professorId);
+            if (professor == null)
+                return NotFound(new { Mensagem = "Professor não encontrado." });
+
+            // 2. Normaliza mês/ano para o primeiro dia do mês
+            var mesAno = new DateTime(dto.Mes.Year, dto.Mes.Month, 1);
+            var idAlunos = dto.Alunos.Select(a => a.IdAluno).ToList();
+
+            // 3. Verifica duplicatas: professor já lançou notas para esse período?
+            var jaExiste = await _context.Notas
+                .AnyAsync(n =>
+                    idAlunos.Contains(n.Aluno.IdAluno) &&
+                    n.Professor.IdProfessor == professorId &&
+                    n.Mes.Year == mesAno.Year &&
+                    n.Mes.Month == mesAno.Month);
+
+            if (jaExiste)
+                return Conflict(new { Mensagem = "Você já lançou notas para este período. Use a opção de editar." });
+
+            // 4. Busca apenas alunos bolsistas que estão no request
+            var alunosBolsistas = await _context.Alunos
+                .Where(a => idAlunos.Contains(a.IdAluno) && a.Bolsista == true)
+                .ToListAsync();
+
+            if (alunosBolsistas.Count != dto.Alunos.Count)
+                return BadRequest(new { Mensagem = "Um ou mais alunos não encontrados ou não são bolsistas." });
+
+            // 5. Cria todas as notas em lote
+            var novas = dto.Alunos.Select(item => new Nota
+            {
+                ValorNota = item.ValorNota,
+                Mes = mesAno,
+                Musica = dto.Musica.Trim(),
+                Descricao = "",
+                Aluno = alunosBolsistas.First(a => a.IdAluno == item.IdAluno),
+                Professor = professor
+            }).ToList();
+
+            _context.Notas.AddRange(novas);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Mensagem = $"Notas lançadas com sucesso para {novas.Count} alunos." });
         }
 
         // GET: api/Nota/medias

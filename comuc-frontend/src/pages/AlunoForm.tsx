@@ -200,8 +200,12 @@ export default function AlunoForm() {
         })
       }
       navigate('/alunos')
-    } catch {
-      setErro('Erro ao salvar aluno. Verifique os dados e tente novamente.')
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+        setErro(error.response.data?.mensagem ?? 'CPF ou RG já cadastrado para outro aluno.')
+      } else {
+        setErro('Erro ao salvar aluno. Verifique os dados e tente novamente.')
+      }
     } finally {
       setSalvando(false)
     }
@@ -334,7 +338,10 @@ export default function AlunoForm() {
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-700">
                 Nome do Pai
-                {eMenor && <span className="ml-1 text-red-500">*</span>}
+                {eMenor
+                  ? <span className="ml-1 text-red-500">*</span>
+                  : <span className="ml-1 text-xs font-normal text-gray-400">(opcional)</span>
+                }
               </label>
               <input
                 type="text"
@@ -348,7 +355,10 @@ export default function AlunoForm() {
             <div className="flex flex-col gap-1">
               <label className="text-sm font-medium text-gray-700">
                 Nome da Mãe
-                {eMenor && <span className="ml-1 text-red-500">*</span>}
+                {eMenor
+                  ? <span className="ml-1 text-red-500">*</span>
+                  : <span className="ml-1 text-xs font-normal text-gray-400">(opcional)</span>
+                }
               </label>
               <input
                 type="text"
@@ -364,7 +374,7 @@ export default function AlunoForm() {
                 Documento do Responsável
                 {eMenor
                   ? <span className="ml-1 text-red-500">*</span>
-                  : <span className="ml-1 text-xs font-normal text-gray-400">(obrigatório para menores de idade)</span>
+                  : <span className="ml-1 text-xs font-normal text-gray-400">(opcional)</span>
                 }
               </label>
               <input
