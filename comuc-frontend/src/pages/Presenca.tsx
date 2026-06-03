@@ -89,11 +89,6 @@ export default function Presenca() {
       return
     }
 
-    if (alunos.every(a => !a.presente)) {
-      setMensagem({ tipo: 'erro', texto: 'Selecione ao menos um aluno presente antes de salvar.' })
-      return
-    }
-
     const bandaNome = opcoesSelect.find(b => b.idBanda === bandaId)?.nome ?? 'Chamada'
 
     setSalvando(true)

@@ -151,7 +151,7 @@ namespace ComucAPI.Controllers
             // 1. Monta a consulta inicial (apenas faltas e alunos válidos no ano selecionado)
             var query = _context.Presencas
                 .Include(p => p.Aluno)
-                .Include(p => p.Banda)
+                .Include(p => p.Banda).ThenInclude(b => b.BandaPai)
                 .Where(p => p.Presente == false && p.Aluno != null && p.Data.Year == anoFiltro)
                 .AsQueryable();
 
@@ -214,7 +214,9 @@ namespace ComucAPI.Controllers
 
                     // O detalhamento histórico:
                     DetalhesPorTurma = grupoAluno
-                        .GroupBy(p => p.Banda != null ? p.Banda.Nome : "Geral / Sem Turma")
+                        .GroupBy(p => p.Banda != null
+                            ? (p.Banda.BandaPai != null ? p.Banda.BandaPai.Nome + " - " + p.Banda.Nome : p.Banda.Nome)
+                            : "Geral / Sem Turma")
                         .Select(grupoTurma => new
                         {
                             Turma = grupoTurma.Key,
